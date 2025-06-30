@@ -3,8 +3,9 @@
 	"version": "1.0.0",
 	"main": "./src/server.ts",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "tsx src/server.ts"
+		"build": "rimraf ./dist && tsc",
+		"build:dev": "npm run build && node ./dist/server.js",
+		"dev": "tsx watch --env-file=.env.development ./src/server.ts"
 	},
 	"keywords": [],
 	"author": "",
