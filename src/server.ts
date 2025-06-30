@@ -1,18 +1,15 @@
+import './config/env/dotenv';
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
-dotenv.config();
+import router from "routes";
+import AppConfig from "config/env/app-config";
 
 const app = express();
-
-const port = process.env.PORT;
+const port = AppConfig.getConfig("PORT");
 
 app.use(cors());
 app.use(cookieParser());
-
-app.get("/", (req, res) => {
-	res.send("Real Estate API is running!");
-});
+app.use('/api', router);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
