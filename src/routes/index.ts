@@ -2,6 +2,7 @@ import AppConfig from "config/env/app-config";
 import { Router } from "express";
 import { NextFunction, Response, Request } from "express";
 import { AppError, errorKinds } from "utils/error-handling";
+import userRouter from "./userRouter";
 
 const router = Router()
 router.get(
@@ -11,9 +12,11 @@ router.get(
             errorKinds.internalServerError,
             "internal Server Error",
         ));
-        res.sendStatus(200).end();
     }
 );
+
+//register route
+router.use('/users', userRouter)
 
 //404 handler
 router.use((req: Request, res: Response, next: NextFunction) => {

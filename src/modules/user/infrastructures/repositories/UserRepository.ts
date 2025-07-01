@@ -1,4 +1,4 @@
-import { User } from "modules/user/domain/User.entity";
+import { User } from "modules/user/domain/entitiies/User.entity";
 import { IUserRepository } from "modules/user/domain/repositories";
 import { prisma } from "../../../../libs/prismaClients";
 import { AppError } from "utils/error-handling";
@@ -8,6 +8,7 @@ export class UserRepository implements IUserRepository {
     async getAll(): Promise<User[]> {
         try {
             const users = await prisma.user.findMany();
+            console.log(users, "repository");
             return users.map((user) => {
                 return new User({
                     'id': user.id,
@@ -20,6 +21,7 @@ export class UserRepository implements IUserRepository {
                 });
             });
         } catch (error) {
+            console.log(error);
             throw AppError.new('internalErrorServer', "prisma error: while getting all users");
         }
     }
