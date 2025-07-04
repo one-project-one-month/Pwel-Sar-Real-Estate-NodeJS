@@ -5,7 +5,7 @@
 	"scripts": {
 		"build": "rimraf ./dist && tsc",
 		"start": "npm run build && node ./dist/src/server.js",
-		"dev": "tsx watch --env-file=.env.development ./src/server.ts"
+		"dev": "tsx watch --env-file=.env ./src/server.ts"
 	},
 	"keywords": [],
 	"author": "",
