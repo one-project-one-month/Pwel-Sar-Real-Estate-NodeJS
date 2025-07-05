@@ -1,12 +1,12 @@
 import { AppError, catchErrorAsync } from "utils/error-handling";
-import { RegisterRepository } from "modules/user/infrastructures/repositories/auth/RegisterRepository";
 import { RegisterDTO } from "../../dtos/auth/AuthDTO";
+import { AuthRepository } from "modules/user/infrastructures/repositories/auth/AuthRepository";
 
 interface IUserCase {
   execute(param: any): Promise<RegisterDTO>;
 }
 export class RegisterUseCase implements IUserCase {
-  constructor(private readonly registerRepository: RegisterRepository) {}
+  constructor(private readonly registerRepository: AuthRepository) {}
 
   async execute(data: any): Promise<RegisterDTO> {
     const existUser = await this.registerRepository.findByEmail(data.email);
