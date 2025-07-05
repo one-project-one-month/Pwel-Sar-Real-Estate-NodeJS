@@ -3,10 +3,11 @@ import { AppError, catchErrorAsync } from "utils/error-handling";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { User } from "modules/user/domain/entitiies/User.entity";
+import { signJwt } from "utils/auth/jwt";
 
-export interface LoginDTO {
-	email: string;
-	password: string;
+export interface LoginParams {
+  email: string;
+  password: string;
 }
 
 export class LoginUseCase {
@@ -15,10 +16,11 @@ export class LoginUseCase {
 	async execute({
 		email,
 		password,
-	}: LoginDTO): Promise<{ user: User; token: string }> {
+	}: LoginParams): Promise<{ user: User; accessToken: string; refreshToken: string }> {
 		// Find user by email
 		const users = await this.userRepository.getAll();
 		const user = users.find((u) => u.email === email);
+
 		if (!user) {
 			throw AppError.new("badRequest", "Invalid email or password");
 		}
@@ -28,11 +30,16 @@ export class LoginUseCase {
 			throw AppError.new("badRequest", "Invalid email or password");
 		}
 		// Generate JWT
-		const token = jwt.sign(
-			{ id: user.id, email: user.email, roleId: user.roleId },
-			process.env.JWT_SECRET || "your_jwt_secret",
-			{ expiresIn: "1d" }
+		const accessToken = signJwt(
+		{ id: user.id, email: user.email, roleId: user.roleId },
+		{ expiresIn: "20s" }
 		);
-		return { user, token };
+
+		const refreshToken = signJwt(
+		{ id: user.id, email: user.email, roleId: user.roleId },
+		{ expiresIn: "7d" }
+		);
+
+		return { user, accessToken, refreshToken };
 	}
 }

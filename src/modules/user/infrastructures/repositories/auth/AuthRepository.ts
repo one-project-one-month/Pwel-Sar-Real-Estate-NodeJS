@@ -28,7 +28,7 @@ export class AuthRepository implements IAuthRepository {
   async create(data: any): Promise<Register> {
       const hashedPassword = await bcrypt.hash(data.password, 10);
        const user = await prisma.user.create({ 
-              data: {
+        data: {
           ...data,
           password: hashedPassword,
         },
