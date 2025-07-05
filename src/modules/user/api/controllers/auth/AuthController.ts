@@ -1,24 +1,28 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError, catchErrorAsync } from "utils/error-handling";
 import { UserRepository } from "modules/user/infrastructures/repositories/UserRepository";
-import { LoginUseCase } from "modules/user/applications/usecase/auth/login";
-import { RegisterUseCase } from "modules/user/applications/usecase/auth/register";
+import { LoginUseCase } from "modules/user/applications/usecase/auth/LoginUseCase";
+import { RegisterUseCase } from "modules/user/applications/usecase/auth/RegisterUseCase";
 import { AuthRepository } from "modules/user/infrastructures/repositories/auth/AuthRepository";
 
 export class AuthController {
-
 	async create(req: Request, res: Response, next: NextFunction) {
 		const { username, email, password } = req.body;
-		
+
+		console.log("Register", req.body);
+
 		const registerUseCase = new RegisterUseCase(new AuthRepository());
-		const [result, error] = await catchErrorAsync(registerUseCase.execute({ username, email, password }));
+		const [result, error] = await catchErrorAsync(
+			registerUseCase.execute({ username, email, password })
+		);
+
 		if (error) {
 			next(error);
 			return;
 		}
-		
+
 		res.status(201).json({
-		user: result,
+			user: result,
 		});
 	}
 
@@ -39,6 +43,7 @@ export class AuthController {
 		}
 		const user = (result as any).user;
 		const token = (result as any).token;
+
 		return res.status(200).json({
 			user: {
 				id: user.id,
