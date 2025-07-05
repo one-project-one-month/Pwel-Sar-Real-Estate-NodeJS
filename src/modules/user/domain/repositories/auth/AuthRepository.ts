@@ -1,3 +1,4 @@
+import { Register } from "../../entitiies/auth/Register.entity";
 import { User } from "../../entitiies/User.entity";
 
 export interface IAuthRepository {

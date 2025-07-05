@@ -1,6 +1,6 @@
 import { AppError, catchErrorAsync } from "utils/error-handling";
-import { RegisterDTO } from "../../dtos/auth/RegisterDTO";
 import { RegisterRepository } from "modules/user/infrastructures/repositories/auth/RegisterRepository";
+import { RegisterDTO } from "../../dtos/auth/AuthDTO";
 
 interface IUserCase {
   execute(param: any): Promise<RegisterDTO>;

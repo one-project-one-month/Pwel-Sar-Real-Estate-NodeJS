@@ -1,2 +1,2 @@
 export * from "./IUserRepository";
-export * from "./auth/IRegisterRepository";
+export * from "./auth/AuthRepository";
