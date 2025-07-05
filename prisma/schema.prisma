@@ -16,12 +16,14 @@ datasource db {
 
 model User {
   id            Int           @id @default(autoincrement())
-  username      String
-  email         String        @unique
+  username      String        @db.VarChar(30)  
+  phone         String        @unique @db.VarChar(12)
+  email         String        @unique @db.VarChar(54)
   photo         String?
   password      String
   role          Role          @relation(fields: [roleId], references: [id])
   roleId        Int
+  refreshToken  String
   agentProfile  AgentProfile?
   ownerProfile  OwnerProfile?
   posts         Post[]        @relation("PostUser")

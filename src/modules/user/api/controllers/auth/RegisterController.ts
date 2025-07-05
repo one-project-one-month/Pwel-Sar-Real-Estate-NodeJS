@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { RegisterUseCase } from "modules/user/applications/usecase/auth/register";
+import { RegisterUseCase } from "modules/user/applications/useCase/auth/register";
 import { RegisterRepository } from "modules/user/infrastructures/repositories/auth/RegisterRepository";
 import { AppError, catchErrorAsync } from "utils/error-handling";
 
@@ -11,7 +11,7 @@ class RegisterController {
     const [result, error] = await catchErrorAsync(registerUseCase.execute({ username, email, password }));
     if (error) return next(error);
     
-    return res.status(201).json({
+    res.status(201).json({
       user: result,
     });
   }

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { GetUserListUseCase } from "modules/user/applications/usecase/getUserList";
+import { GetUserListUseCase } from "modules/user/applications/useCase/getUserList";
 import { UserRepository } from "modules/user/infrastructures/repositories/UserRepository";
 import { AppError, catchErrorAsync } from "utils/error-handling";
 

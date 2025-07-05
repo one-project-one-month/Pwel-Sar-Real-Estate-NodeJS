@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError, catchErrorAsync } from "utils/error-handling";
 import { AuthRepository } from "modules/user/infrastructures/repositories/auth/AuthRepository";
-import { LoginUseCase } from "modules/user/applications/usecase/auth/login";
-import { RegisterUseCase } from "modules/user/applications/usecase/auth/register";
+import { LoginUseCase } from "modules/user/applications/useCase/auth/login";
+import { RegisterUseCase } from "modules/user/applications/useCase/auth/register";
 import { RegisterRepository } from "modules/user/infrastructures/repositories/auth/RegisterRepository";
 import { LoginDTO } from "modules/user/applications/dtos/auth/LoginDTO";
 
