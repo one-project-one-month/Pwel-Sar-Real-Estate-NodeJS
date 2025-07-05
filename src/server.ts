@@ -10,6 +10,8 @@ const port = AppConfig.getConfig("PORT");
 
 app.use(cors());
 app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use('/api', router);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));

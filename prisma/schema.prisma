@@ -43,7 +43,7 @@ model AgentProfile {
   cnaNumber     String
   licenseNumber Int      @map("New") // Renamed from "New"
   ratings       Rating[]
-
+  
   @@map("agent_profile")
 }
 

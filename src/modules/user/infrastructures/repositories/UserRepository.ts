@@ -4,6 +4,10 @@ import { prisma } from "../../../../libs/prismaClients";
 import { AppError } from "utils/error-handling";
 
 export class UserRepository implements IUserRepository {
+    save: any;
+    findByEmail(email: string) {
+      throw new Error("Method not implemented.");
+    }
 
     async getAll(): Promise<User[]> {
         try {

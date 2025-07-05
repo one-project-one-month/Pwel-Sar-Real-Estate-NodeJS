@@ -4,3 +4,5 @@ node_modules
 .env.development
 
 /generated/prisma
+
+package-lock.json

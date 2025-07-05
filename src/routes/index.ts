@@ -3,6 +3,7 @@ import { Router } from "express";
 import { NextFunction, Response, Request } from "express";
 import { AppError, errorKinds } from "utils/error-handling";
 import userRouter from "./userRouter";
+import authRouter from "./authRouter";
 
 const router = Router()
 router.get(
@@ -17,6 +18,7 @@ router.get(
 
 //register route
 router.use('/users', userRouter)
+router.use('/auth', authRouter);
 
 //404 handler
 router.use((req: Request, res: Response, next: NextFunction) => {
