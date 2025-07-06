@@ -52,7 +52,7 @@ model AgentProfile {
   cnaNumber     String
   licenseNumber Int      @map("New")
   ratings       Rating[]
-  isApproved    Boolean  @default(false)
+  status    AgentProfileStatus  @default(Pending)
 
   approvedBy    User?    @relation("ApprovedByUser", fields: [approvedById], references: [id])
   approvedById  Int?
@@ -181,4 +181,10 @@ model Rating {
   createdAt DateTime     @default(now())
 
   @@map("rating")
+}
+
+enum AgentProfileStatus {
+  Pending
+  Approved
+  Rejected
 }
