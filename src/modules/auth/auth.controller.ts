@@ -9,24 +9,12 @@ export default class AuthController {
     @inject("IAuthUseCase") private readonly _authUseCase: IAuthUseCase
   ) {}
 
-  async registerAgentAsync(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<any> {
-    const [pendingAgent, error] = await catchErrorAsync(
-      this._authUseCase.registerAgentAsync(req.body)
-    );
-    if (error) return next(error);
-    return res.status(200).json(pendingAgent);
-  }
-
   async registerUserAsync(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<any> {
-    const [newUser, error] = await catchErrorAsync(
+    const [error, newUser] = await catchErrorAsync(
       this._authUseCase.registerUserAsync(req.body)
     );
     if (error) return next(error);

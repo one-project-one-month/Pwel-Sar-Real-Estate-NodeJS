@@ -1,4 +1,5 @@
 import { User } from "modules/user/domain/entitiies/User.entity";
+import { AgentProfileStatus } from "../../generated/prisma";
 
 type AgentProfileParams = {
   id: number;
@@ -6,7 +7,7 @@ type AgentProfileParams = {
   cnaNumber: string;
   licenseNumber: number;
   user?: User;
-  isApproved: boolean;
+  status: AgentProfileStatus;
   approvedById?: number | null;
   approvedAt?: Date | null;
 };
@@ -17,7 +18,7 @@ export class AgentProfile {
   cnaNumber: string;
   licenseNumber: number;
   user?: User;
-  isApproved: boolean;
+  status: AgentProfileStatus;
   approvedById?: number | null;
   approvedAt?: Date | null;
 
@@ -27,7 +28,7 @@ export class AgentProfile {
     this.cnaNumber = params.cnaNumber;
     this.licenseNumber = params.licenseNumber;
     this.user = params.user;
-    this.isApproved = params.isApproved;
+    this.status = params.status;
     this.approvedAt = params.approvedAt;
     this.approvedById = params.approvedById;
   }

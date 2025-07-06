@@ -1,9 +1,7 @@
 import { UserRegistrationRequestDto } from "modules/auth/dtos/auth.request.dto";
 import { AppError, errorKinds } from "./error-handling";
 
-export const validatePasswordRequirements = (
-  password: string
-): AppError | null => {
+export const validatePasswordRequirements = (password: string) => {
   const trimmed = password.trim();
   const violations: string[] = [];
 
@@ -24,7 +22,7 @@ export const validatePasswordRequirements = (
   }
 
   if (violations.length > 0) {
-    return new AppError(errorKinds.validationFailed, violations.join(" "));
+    throw AppError.new(errorKinds.validationFailed, violations.join(" "));
   }
 
   return null;
@@ -32,10 +30,10 @@ export const validatePasswordRequirements = (
 
 export const validateUserRegistrationCredentials = (
   req: UserRegistrationRequestDto
-): AppError | null => {
+) => {
   return null;
 };
 
-export const validateAgentCredentials = (): AppError | null => {
+export const validateAgentCredentials = () => {
   return null;
 };

@@ -6,12 +6,7 @@ const authRouter = Router();
 const authController = container.resolve(AuthController);
 
 authRouter.post(
-  "/agents/register",
-  authController.registerAgentAsync.bind(authController)
-);
-
-authRouter.post(
-  "/users/register",
+  "/register",
   authController.registerUserAsync.bind(authController)
 );
 
