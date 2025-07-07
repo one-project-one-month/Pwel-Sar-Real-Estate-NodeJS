@@ -5,14 +5,14 @@ import { AppError, errorKinds } from "utils/error-handling";
 
 const checkPermissionUseCase = new CheckRolePermission(new PermissionRepository());
 
-export const checkPermission = (permission: { resource: string; action: string }) => {
+export const checkPermissionMiddleware = (permission: { resource: string; action: string }) => {
   return async function (req: Request, res: Response, next: NextFunction) {
     try {
-      const roleName = req.user?.role_id;
-      if (!roleName) throw AppError.new(errorKinds.notAuthorized, "Missing user role");
+      const roleID = 1 //TODO: get user role;
+      if (!roleID) throw AppError.new(errorKinds.notAuthorized, "Missing user role");
 
       const isAllowed = await checkPermissionUseCase.execute({
-        roleName,
+        roleID,
         resource: permission.resource,
         action: permission.action,
       });

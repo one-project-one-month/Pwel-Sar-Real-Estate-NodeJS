@@ -3,14 +3,15 @@ import { NextFunction, Response, Request } from "express";
 import { AppError, errorKinds } from "utils/error-handling";
 import userRouter from "./userRouter";
 import authRouter from "./authRouter";
-// import userRouter from "./userRouter";
 import agentRouter from "./agentRouter";
+import { checkPermissionMiddleware } from "modules/user/api/middlewares/checkPermissionMIddleware";
 
 const router = Router();
 router.get(
   "/healthCheck",
+  checkPermissionMiddleware({ resource: "property", action: "edit" }),
   async (req: Request, res: Response, next: NextFunction) => {
-    next(AppError.new(errorKinds.internalServerError, "internal Server Error"));
+    res.sendStatus(200);
   }
 );
 
