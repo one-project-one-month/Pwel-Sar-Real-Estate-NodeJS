@@ -18,7 +18,7 @@ export class RegisterUseCase implements IUser {
 			// throw new Error("badRequest", "Email already exists");
 		}
 
-		const [user, error] = await catchErrorAsync(
+		const [error, user] = await catchErrorAsync(
 			this.authRepository.create({
 				id: data.id,
 				username: data.username,
