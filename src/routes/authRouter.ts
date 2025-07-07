@@ -1,13 +1,31 @@
 import { Router } from "express";
-import { container } from "tsyringe";
-import AuthController from "modules/auth/auth.controller";
+import passport from "passport";
+
+import { AuthController } from "modules/user/api/controllers/AuthController";
+
+import validationMiddleware from "middlewares/validationMiddlewate";
+import {
+  LoginSchema,
+  RegisterSchema,
+} from "modules/user/api/middlewares/authValidation";
+
+// import { validate } from "modules/user/api/middlewares/validate";
+
+const authController = new AuthController();
 
 const authRouter = Router();
-const authController = container.resolve(AuthController);
 
 authRouter.post(
   "/register",
-  authController.registerUserAsync.bind(authController)
+  validationMiddleware.validateRequestBody(RegisterSchema),
+  authController.create
+);
+
+authRouter.post(
+  "/login",
+  validationMiddleware.validateRequestBody(LoginSchema),
+  passport.authenticate("local", { session: false }),
+  authController.login
 );
 
 export default authRouter;
