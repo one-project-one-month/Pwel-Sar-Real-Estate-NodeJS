@@ -15,59 +15,59 @@ datasource db {
 }
 
 model User {
-  id             Int              @id @default(autoincrement())
-  username       String
-  email          String           @unique
-  photo          String?
-  password       String
-  role           Role             @relation(fields: [roleId], references: [id])
-  roleId         Int
+  id       Int     @id @default(autoincrement())
+  username String
+  email    String  @unique
+  photo    String?
+  password String
+  role     Role    @relation(fields: [roleId], references: [id])
+  roleId   Int
 
-  agentProfile   AgentProfile?    @relation("AgentUser")
-  approvedAgents AgentProfile[]   @relation("ApprovedByUser")
+  agentProfile   AgentProfile?  @relation("AgentUser")
+  approvedAgents AgentProfile[] @relation("ApprovedByUser")
 
-  ownerProfile   OwnerProfile?
+  ownerProfile OwnerProfile?
 
-  posts          Post[]           @relation("PostUser")
-  approvedPosts  Post[]           @relation("PostAdmin")
+  posts         Post[] @relation("PostUser")
+  approvedPosts Post[] @relation("PostAdmin")
 
-  properties     Property[]       @relation("UserProperty")
-  activities     AllActivity[]
-  photos         UserPhoto[]
-  ratings        Rating[]
+  properties Property[]    @relation("UserProperty")
+  activities AllActivity[]
+  photos     UserPhoto[]
+  ratings    Rating[]
 
-  refreshTokens  RefreshToken[]   @relation("TokenUser")
+  refreshTokens RefreshToken[] @relation("TokenUser")
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("user")
 }
 
 model RefreshToken {
-  id      Int    @id @default(autoincrement())
-  token   String @unique
-  userId  Int
-  user    User   @relation("TokenUser", fields: [userId], references: [id])
+  id     Int    @id @default(autoincrement())
+  token  String @unique
+  userId Int
+  user   User   @relation("TokenUser", fields: [userId], references: [id])
 
   @@map("refresh_token")
 }
 
 model AgentProfile {
-  id            Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  user          User     @relation("AgentUser", fields: [userId], references: [id])
-  userId        Int      @unique
+  user   User @relation("AgentUser", fields: [userId], references: [id])
+  userId Int  @unique
 
   cnaNumber     String
-  licenseNumber Int      @map("New")
+  licenseNumber Int                @map("New")
   ratings       Rating[]
-  status    AgentProfileStatus  @default(Pending)
+  status        AgentProfileStatus @default(Pending)
 
-  approvedBy    User?    @relation("ApprovedByUser", fields: [approvedById], references: [id])
-  approvedById  Int?
+  approvedBy   User? @relation("ApprovedByUser", fields: [approvedById], references: [id])
+  approvedById Int?
 
-  approvedAt    DateTime?
+  approvedAt DateTime?
 
   @@map("agent_profile")
 }
@@ -91,11 +91,11 @@ model Post {
 }
 
 model Role {
-  id          Int          @id @default(autoincrement())
-  name        RoleName       @unique
-  value       String // Changed from Int to String for flexibility
-  users       User[]
-  permissions Permission[]
+  id              Int              @id @default(autoincrement())
+  name            RoleName         @unique
+  value           String // Changed from Int to String for flexibility
+  users           User[]
+  permissions     Permission[]
   rolePermissions RolePermission[] @relation("permissions")
 
   @@map("role")
@@ -103,17 +103,18 @@ model Role {
 
 model RolePermission {
   roleId       Int
-  role          Role       @relation("permissions", fields: [roleId], references: [id])
+  role         Role       @relation("permissions", fields: [roleId], references: [id])
   permissionId Int
-  permission    Permission @relation("roles", fields: [permissionId], references: [id])
+  permission   Permission @relation("roles", fields: [permissionId], references: [id])
 
   @@id([roleId, permissionId])
 }
+
 model Property {
-  id             Int          @id @default(autoincrement())
-  owner          User         @relation("UserProperty", fields: [ownerId], references: [id])
+  id             Int             @id @default(autoincrement())
+  owner          User            @relation("UserProperty", fields: [ownerId], references: [id])
   ownerId        Int
-  propertyType   PropertyType @relation(fields: [propertyTypeId], references: [id])
+  propertyType   PropertyType    @relation(fields: [propertyTypeId], references: [id])
   propertyTypeId Int
   bedRoom        Int
   bathRoom       Int
@@ -124,7 +125,7 @@ model Property {
   floor          Int
   township       String
   region         String
-  length         Int          @map("lenth") // Fixed typo
+  length         Int             @map("lenth") // Fixed typo
   width          Int
   currency       String // Changed from Int to String (e.g., "USD")
   posts          Post[]
@@ -134,11 +135,11 @@ model Property {
 }
 
 model Permission {
-  id     Int  @id @default(autoincrement())
-  action String
-  resource String
-  role   Role @relation(fields: [roleId], references: [id])
-  roleId Int
+  id              Int              @id @default(autoincrement())
+  action          String
+  resource        String
+  role            Role             @relation(fields: [roleId], references: [id])
+  roleId          Int
   rolePermissions RolePermission[] @relation("roles")
 
   @@map("permission") // Fixed spelling from "permmision"
