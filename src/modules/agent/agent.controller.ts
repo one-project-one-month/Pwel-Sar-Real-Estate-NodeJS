@@ -35,9 +35,12 @@ export default class AgentController {
     const approvingAdminId: number = accessToken
       ? getUserIdByJwtToken(accessToken)
       : 39;
+    const { id } = req.params;
+    const agentId = parseInt(id, 10);
 
     const [error, modifiedAgent] = await catchErrorAsync(
       this._agentUseCase.approveOrRejectAgentRegistrationAsync(
+        agentId,
         req.body,
         approvingAdminId
       )

@@ -11,7 +11,7 @@ agentRouter.post(
 );
 
 agentRouter.patch(
-  "/approve-or-reject",
+  "/:id/approve-or-reject",
   agentController.approveOrRejectAgentRegistration.bind(agentController)
 );
 

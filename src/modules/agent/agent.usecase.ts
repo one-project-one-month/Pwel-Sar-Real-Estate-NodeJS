@@ -34,6 +34,7 @@ export class AgentUseCase implements IAgentUseCase {
   }
 
   async approveOrRejectAgentRegistrationAsync(
+    agentId: number,
     req: AgentRegistrationApproveRequestDto,
     approvingAdminId: number
   ): Promise<AgentResponseDto> {
@@ -44,6 +45,7 @@ export class AgentUseCase implements IAgentUseCase {
 
     try {
       return await this._agentRepo.approveOrRejectAgentRegistration(
+        agentId,
         req,
         approvingAdminId
       );

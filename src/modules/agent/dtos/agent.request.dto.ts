@@ -20,16 +20,13 @@ export class AgentRegisterRequestDto {
 }
 
 interface AgentRegistrationApproveRequestDtoParams {
-  agentId: number;
   status: AgentProfileStatus;
 }
 
 export class AgentRegistrationApproveRequestDto {
-  agentId: number;
   status: AgentProfileStatus;
 
   constructor(params: AgentRegistrationApproveRequestDtoParams) {
-    this.agentId = params.agentId;
     this.status = params.status;
   }
 }

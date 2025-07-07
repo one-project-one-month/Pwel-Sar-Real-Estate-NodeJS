@@ -38,11 +38,12 @@ export class AgentRepository implements IAgentRepository {
 
   // approve or reject agent registration (only admins with permission)
   async approveOrRejectAgentRegistration(
+    agentId: number,
     req: AgentRegistrationApproveRequestDto,
     approvingAdminId: number
   ): Promise<AgentProfile> {
     const existingAgent = await prisma.agentProfile.findUnique({
-      where: { id: req.agentId },
+      where: { id: agentId },
     });
 
     if (!existingAgent) {
@@ -58,7 +59,7 @@ export class AgentRepository implements IAgentRepository {
     }
 
     const updatedAgent = await prisma.agentProfile.update({
-      where: { id: req.agentId },
+      where: { id: agentId },
       data: {
         status: req.status,
         approvedById: approvingAdminId,

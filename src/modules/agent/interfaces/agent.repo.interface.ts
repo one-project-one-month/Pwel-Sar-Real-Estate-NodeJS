@@ -10,6 +10,7 @@ export interface IAgentRepository {
     userId: number
   ): Promise<AgentProfile>;
   approveOrRejectAgentRegistration(
+    agentId: number,
     req: AgentRegistrationApproveRequestDto,
     approvingAdminId: number
   ): Promise<AgentProfile>;
