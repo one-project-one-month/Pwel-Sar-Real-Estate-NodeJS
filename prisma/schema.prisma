@@ -36,12 +36,22 @@ model User {
   photos         UserPhoto[]
   ratings        Rating[]
 
+  refreshTokens  RefreshToken[]   @relation("TokenUser")
+
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
   @@map("user")
 }
 
+model RefreshToken {
+  id      Int    @id @default(autoincrement())
+  token   String @unique
+  userId  Int
+  user    User   @relation("TokenUser", fields: [userId], references: [id])
+
+  @@map("refresh_token")
+}
 
 model AgentProfile {
   id            Int      @id @default(autoincrement())
@@ -61,7 +71,6 @@ model AgentProfile {
 
   @@map("agent_profile")
 }
-
 
 model Post {
   id         Int           @id @default(autoincrement())
@@ -83,14 +92,23 @@ model Post {
 
 model Role {
   id          Int          @id @default(autoincrement())
-  name        String       @unique
+  name        RoleName       @unique
   value       String // Changed from Int to String for flexibility
   users       User[]
   permissions Permission[]
+  rolePermissions RolePermission[] @relation("permissions")
 
   @@map("role")
 }
 
+model RolePermission {
+  roleId       Int
+  role          Role       @relation("permissions", fields: [roleId], references: [id])
+  permissionId Int
+  permission    Permission @relation("roles", fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+}
 model Property {
   id             Int          @id @default(autoincrement())
   owner          User         @relation("UserProperty", fields: [ownerId], references: [id])
@@ -110,26 +128,29 @@ model Property {
   width          Int
   currency       String // Changed from Int to String (e.g., "USD")
   posts          Post[]
-  photos         Photo[]
+  photos         PropertyPhoto[]
 
   @@map("property")
 }
 
 model Permission {
   id     Int  @id @default(autoincrement())
+  action String
+  resource String
   role   Role @relation(fields: [roleId], references: [id])
   roleId Int
+  rolePermissions RolePermission[] @relation("roles")
 
   @@map("permission") // Fixed spelling from "permmision"
 }
 
-model Photo {
+model PropertyPhoto {
   id         Int      @id @default(autoincrement())
   path       String
   property   Property @relation(fields: [propertyId], references: [id])
   propertyId Int
 
-  @@map("photo")
+  @@map("property_photo")
 }
 
 model AllActivity {
@@ -168,7 +189,7 @@ model UserPhoto {
   user   User   @relation(fields: [userId], references: [id])
   userId Int
 
-  @@map("user_photo") // Recommended snake_case
+  @@map("user_photo")
 }
 
 model Rating {
@@ -187,4 +208,10 @@ enum AgentProfileStatus {
   Pending
   Approved
   Rejected
+}
+
+enum RoleName {
+  Admin
+  User
+  Agent
 }
