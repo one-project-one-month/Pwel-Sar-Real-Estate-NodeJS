@@ -12,7 +12,7 @@ class ValidationMiddleware {
     return (req: Request, res: Response, next: NextFunction) => {
       const { schema, target } = props;
       const validation = schema.safeParse(
-        target === "BODY" ? req.body : req.query
+        target === "BODY" ? req.body ?? {} : req.query ?? {}
       );
       if (!validation.success) {
         next(
