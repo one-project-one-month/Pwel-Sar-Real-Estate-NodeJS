@@ -29,7 +29,9 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // error handling
-router.use((err: any, req: Request, res: Response) => {
+
+// eslint-disable-next-line no-unused-vars
+router.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof AppError) {
     res
       .status(err.getStatus())
