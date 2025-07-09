@@ -1,94 +1,96 @@
-import { prisma } from "libs/prismaClients";
-import { IAuthRepository } from "modules/user/domain/repositories/IAuthRepository";
-import { User } from "modules/user/domain/entitiies/User.entity";
-import { Token } from "modules/user/domain/entitiies/Token.entity";
-import { AppError } from "utils/error-handling";
-
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
+import { prisma } from 'libs/prismaClients';
+import { Token } from 'modules/user/domain/entitiies/Token.entity';
+import { User } from 'modules/user/domain/entitiies/User.entity';
+import { IAuthRepository } from 'modules/user/domain/repositories/IAuthRepository';
+import { AppError } from 'utils/error-handling';
 
 export class AuthRepository implements IAuthRepository {
-	async create(data: any): Promise<User> {
-		const hashedPassword = await bcrypt.hash(data.password, 10);
-		const user = await prisma.user.create({
-			data: {
-				...data,
-				password: hashedPassword,
-			},
-		});
-		const newUser = new User({
-			id: user.id,
-			email: user.email,
-			password: user.password,
-			username: user.username,
-			roleId: user.roleId,
-			createdAt: user.createdAt,
-			updatedAt: user.updatedAt,
-		});
-		return newUser;
-	}
+  async create(data: any): Promise<User> {
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const user = await prisma.user.create({
+      data: {
+        ...data,
+        password: hashedPassword,
+      },
+    });
+    const newUser = new User({
+      createdAt: user.createdAt,
+      email: user.email,
+      id: user.id,
+      password: user.password,
+      roleId: user.roleId,
+      updatedAt: user.updatedAt,
+      username: user.username,
+    });
+    return newUser;
+  }
 
-	async findByEmail(email: string): Promise<User | null> {
-		const user = await prisma.user.findUnique({
-			where: { email: email },
-		});
+  async createRefreshToken(data: {
+    refreshToken: string;
+    userId: number;
+    // expiresAt: Date;
+  }): Promise<Token> {
+    const token = await prisma.refreshToken.create({
+      data: {
+        // expiresAt: data.expiresAt,
+        token: data.refreshToken,
+        userId: data.userId,
+      },
+    });
 
-		if (!user) return null;
+    if (!token)
+      throw AppError.new(
+        'internalErrorServer',
+        'Failed to create refresh token'
+      );
 
-		return new User({
-			id: user.id,
-			username: user.username,
-			email: user.email,
-			password: user.password,
-			roleId: user.roleId,
-			createdAt: user.createdAt,
-			updatedAt: user.updatedAt,
-		});
-	}
+    return new Token(token.id, token.token, token.userId);
+  }
 
-	async createRefreshToken(data: {
-		refreshToken: string;
-		userId: number;
-		expiresAt: Date;
-	}): Promise<void> {
-		// const token = await prisma.token.create({
-		// 	data: {
-		// 		refreshToken: data.refreshToken,
-		// 		userId: data.userId,
-		// 		expiresAt: data.expiresAt,
-		// 	},
-		// });
-		// if (!token)
-		// 	throw AppError.new(
-		// 		"internalErrorServer",
-		// 		"Failed to create refresh token"
-		// 	);
-		// return token;
-	}
+  async deleteToken(refreshToken: string): Promise<void> {
+    const token = await prisma.refreshToken.deleteMany({
+      where: { token: refreshToken },
+    });
 
-	async findToken(userId: number): Promise<Token | null> {
-		// const token = await prisma.token.findFirst({
-		// 	where: { userId: userId },
-		// });
+    if (!token)
+      throw AppError.new('internalErrorServer', 'Failed to delete token');
+  }
 
-		// if (!token) return null;
+  async findByEmail(email: string): Promise<null | User> {
+    const user = await prisma.user.findUnique({
+      where: { email: email },
+    });
 
-		// const refreshToken = new Token(
-		// 	token.id,
-		// 	token.refreshToken,
-		// 	token.userId,
-		// 	token.expiresAt,
-		// 	token.createdAt,
-		// 	token.updatedAt
-		// )
+    if (!user) return null;
 
-		return null;
-	}
+    return new User({
+      createdAt: user.createdAt,
+      email: user.email,
+      id: user.id,
+      password: user.password,
+      roleId: user.roleId,
+      updatedAt: user.updatedAt,
+      username: user.username,
+    });
+  }
 
-	async deleteToken(refreshToken: string): Promise<void> {
-		// const token = await prisma.token.deleteMany({
-		// 	where: { userId: userId },
-		// });
-		// if (!token)
-		// 	throw AppError.new("internalErrorServer", "Failed to delete token");
-	}
+  async findToken(userId: number): Promise<null | Token> {
+    const token = await prisma.refreshToken.findFirst({
+      where: { userId: userId },
+    });
+
+    if (!token) return null;
+
+    const refreshToken = new Token(
+      token.id,
+      token.token,
+      token.userId
+      //   token.expiresAt,
+      //   token.createdAt,
+      //   token.updatedAt
+    );
+
+    return refreshToken;
+  }
 }
