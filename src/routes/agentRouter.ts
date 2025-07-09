@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import validationMiddlewate from 'middlewares/validationMiddlewate';
+import validationMiddlewate from 'middlewares/validationMiddleware';
 import AgentController from 'modules/agent/agent.controller';
 import { createRatingReqBodySchema } from 'modules/agent/api/body/createRatingSchema';
 import ratingController from 'modules/agent/api/controller/RatingController';

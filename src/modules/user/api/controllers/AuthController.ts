@@ -23,6 +23,7 @@ export class AuthController {
       next(error);
       return;
     }
+
     res.status(201).json({
       user: result,
     });

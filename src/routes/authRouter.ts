@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import validationMiddleware from 'middlewares/validationMiddlewate';
+import validationMiddleware from 'middlewares/validationMiddleware';
 import { AuthController } from 'modules/user/api/controllers/AuthController';
 import {
   LoginSchema,
@@ -23,5 +23,9 @@ authRouter.post(
   passport.authenticate('local', { session: false }),
   authController.login
 );
+
+// authRouter.get('get-user', passport.authenticate('access-jwt'), (req, res) => {
+//     user =
+// });
 
 export default authRouter;
