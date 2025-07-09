@@ -29,11 +29,9 @@ export class AuthRepository implements IAuthRepository {
   async createRefreshToken(data: {
     refreshToken: string;
     userId: number;
-    // expiresAt: Date;
   }): Promise<Token> {
     const token = await prisma.refreshToken.create({
       data: {
-        // expiresAt: data.expiresAt,
         token: data.refreshToken,
         userId: data.userId,
       },
@@ -75,6 +73,24 @@ export class AuthRepository implements IAuthRepository {
     });
   }
 
+  async findById(id: number): Promise<null | User> {
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) return null;
+
+    return new User({
+      createdAt: user.createdAt,
+      email: user.email,
+      id: user.id,
+      password: user.password,
+      roleId: user.roleId,
+      updatedAt: user.updatedAt,
+      username: user.username,
+    });
+  }
+
   async findToken(userId: number): Promise<null | Token> {
     const token = await prisma.refreshToken.findFirst({
       where: { userId: userId },
@@ -82,14 +98,7 @@ export class AuthRepository implements IAuthRepository {
 
     if (!token) return null;
 
-    const refreshToken = new Token(
-      token.id,
-      token.token,
-      token.userId
-      //   token.expiresAt,
-      //   token.createdAt,
-      //   token.updatedAt
-    );
+    const refreshToken = new Token(token.id, token.token, token.userId);
 
     return refreshToken;
   }

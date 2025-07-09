@@ -1,30 +1,26 @@
-import { Router } from "express";
-import passport from "passport";
-
-import { AuthController } from "modules/user/api/controllers/AuthController";
-
-import validationMiddleware from "middlewares/validationMiddlewate";
+import { Router } from 'express';
+import validationMiddleware from 'middlewares/validationMiddlewate';
+import { AuthController } from 'modules/user/api/controllers/AuthController';
 import {
   LoginSchema,
   RegisterSchema,
-} from "modules/user/api/middlewares/authValidation";
-
-// import { validate } from "modules/user/api/middlewares/validate";
+} from 'modules/user/api/middlewares/authValidation';
+import passport from 'passport';
 
 const authController = new AuthController();
 
 const authRouter = Router();
 
 authRouter.post(
-  "/register",
+  '/register',
   validationMiddleware.validateRequestBody(RegisterSchema),
   authController.create
 );
 
 authRouter.post(
-  "/login",
+  '/login',
   validationMiddleware.validateRequestBody(LoginSchema),
-  passport.authenticate("local", { session: false }),
+  passport.authenticate('local', { session: false }),
   authController.login
 );
 
