@@ -1,5 +1,5 @@
-import { User } from "modules/user/domain/entitiies/User.entity";
-import { AgentProfileStatus } from "../../generated/prisma";
+import { User } from 'entities/user.entity';
+import { AgentProfileStatus } from '../../generated/prisma';
 
 type AgentProfileParams = {
   id: number;

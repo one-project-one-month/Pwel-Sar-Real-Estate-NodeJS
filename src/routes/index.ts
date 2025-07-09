@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { NextFunction, Request, Response } from 'express';
-import { checkPermissionMiddleware } from 'modules/user/api/middlewares/checkPermissionMIddleware';
+import { checkPermissionMiddleware } from 'middlewares/checkPermissionMIddleware';
 import { AppError, errorKinds } from 'utils/error-handling';
 
 import agentRouter from './agentRouter';

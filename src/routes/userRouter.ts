@@ -1,7 +1,10 @@
-import { Router, Request, Response } from "express";
-import userController from "modules/user/api/controllers/UsersController";
+import { Router } from 'express';
+import { UserController } from 'modules/user/user.controller';
+import { container } from 'tsyringe';
 
 const userRouter = Router();
-userRouter.get("/", userController.getAll);
+const userController = container.resolve(UserController);
+
+userRouter.get('/', userController.getAllUsersAsync.bind(userController));
 
 export default userRouter;

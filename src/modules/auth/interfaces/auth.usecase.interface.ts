@@ -1,6 +1,12 @@
-import { UserRegistrationRequestDto } from "../dtos/auth.request.dto";
-import { UserDTO } from "modules/user/applications/dtos/UserDTO";
+import { UserResponseDto } from 'modules/user/dtos/user.response.dto';
+import {
+  UserLoginRequestDto,
+  UserRegistrationRequestDto,
+} from '../dtos/auth.request.dto';
 
 export interface IAuthUseCase {
-  registerUserAsync(req: UserRegistrationRequestDto): Promise<UserDTO>;
+  registerUserAsync(req: UserRegistrationRequestDto): Promise<UserResponseDto>;
+  checkRolePermission(params: any): Promise<any>;
+  loginUserAsync(req: UserLoginRequestDto): Promise<UserResponseDto>;
+  logoutUserAsync(): Promise<UserResponseDto>;
 }
