@@ -3,7 +3,7 @@ import { AppError, errorKinds } from 'utils/error-handling';
 
 import ENV from '../../config/env/custom-env';
 
-const ACCESS_TOKEN_PRIVATE_KEY = Buffer.from(
+export const ACCESS_TOKEN_PRIVATE_KEY = Buffer.from(
   ENV.ACCESS_TOKEN_PRIVATE_KEY!,
   'base64'
 ).toString('ascii');

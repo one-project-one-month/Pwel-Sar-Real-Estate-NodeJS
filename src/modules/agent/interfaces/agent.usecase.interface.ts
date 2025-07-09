@@ -7,8 +7,8 @@ import { AgentResponseDto } from '../dtos/agent.response.dto';
 
 export interface IAgentUseCase {
   approveOrRejectAgentRegistrationAsync(
-    agentId: number,
     req: AgentRegistrationApproveRequestDto,
+    agentId: number,
     approvingAdminId: number
   ): Promise<AgentResponseDto>;
   registerAgentAsync(req: AgentRegisterRequestDto): Promise<AgentResponseDto>;

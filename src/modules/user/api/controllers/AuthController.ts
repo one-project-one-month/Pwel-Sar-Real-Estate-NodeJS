@@ -1,19 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
 import { LogoutUseCase } from 'modules/user/applications/usecase/auth/LogoutUseCase';
 import { RegisterUseCase } from 'modules/user/applications/usecase/auth/RegisterUseCase';
-import { AuthRepository } from 'modules/user/infrastructures/repositories/AuthRepository';
 import { AppError, catchErrorAsync, errorKinds } from 'utils/error-handling';
 
+// import { AuthRepository } from 'modules/user/infrastructures/repositories/AuthRepository';
 import { LoginUseCase } from './../../applications/usecase/auth/LoginUseCase';
 
+import { Container } from '../di/Container';
 export class AuthController {
   async create(req: Request, res: Response, next: NextFunction) {
     const { email, password, username } = req.body;
 
     console.log(req.body);
 
-    const registerUseCase = new RegisterUseCase(new AuthRepository());
-    const [result, error] = await catchErrorAsync(
+    const registerUseCase = new RegisterUseCase(Container.authRepository);
+    const [error, result] = await catchErrorAsync(
       registerUseCase.execute({ email, password, username })
     );
 
@@ -29,22 +30,28 @@ export class AuthController {
     });
   }
 
+  async getUser(req: Request, res: Response, next: NextFunction) {
+    if (!req.user) throw new Error('User not authenticated');
+
+    // const user =
+  }
+
   async login(req: Request, res: Response, next: NextFunction) {
     const { email, password } = req.body;
     console.log('Login', req.body);
-    const loginUseCase = new LoginUseCase(new AuthRepository());
+    const loginUseCase = new LoginUseCase(Container.authRepository);
 
-    // const [result, error] = await catchErrorAsync(
-    // 	loginUseCase.execute({ email, password })
-    // );
-    // console.log(result);
+    const [error, result] = await catchErrorAsync(
+      loginUseCase.execute({ email, password })
+    );
+    console.log(result);
 
-    // if (error) {
-    // 	next(error);
-    // 	return;
-    // }
+    if (error) {
+      next(error);
+      return;
+    }
 
-    const result = await loginUseCase.execute({ email, password });
+    // const result = await loginUseCase.execute({ email, password });
 
     if (!result)
       return next(AppError.new(errorKinds.badRequest, 'Login failed'));
@@ -54,14 +61,13 @@ export class AuthController {
 
   // eslint-disable-next-line no-unused-vars
   async logout(req: Request, res: Response, next: NextFunction) {
-    const { refreshToken } = req.body;
+    const { id }: { id: number } = req.user as { id: number };
 
-    const logoutUseCase = new LogoutUseCase(new AuthRepository());
+    const logoutUseCase = new LogoutUseCase(Container.authRepository);
 
-    if (!refreshToken)
-      throw AppError.new('invalidToken', 'Invalid RefreshToken');
+    if (!id) throw AppError.new('invalidToken', 'Invalid RefreshToken');
 
-    await logoutUseCase.execute(refreshToken);
+    await logoutUseCase.execute(id);
 
     res.status(204).send();
   }

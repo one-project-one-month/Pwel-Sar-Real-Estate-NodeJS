@@ -46,9 +46,9 @@ export class AuthRepository implements IAuthRepository {
     return new Token(token.id, token.token, token.userId);
   }
 
-  async deleteToken(refreshToken: string): Promise<void> {
+  async deleteToken(userId: number): Promise<void> {
     const token = await prisma.refreshToken.deleteMany({
-      where: { token: refreshToken },
+      where: { userId },
     });
 
     if (!token)
