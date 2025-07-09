@@ -1,8 +1,8 @@
-import { AgentProfile } from "entities";
+import { AgentProfile, Rating } from 'entities';
 import {
   AgentRegisterRequestDto,
   AgentRegistrationApproveRequestDto,
-} from "../dtos/agent.request.dto";
+} from '../dtos/agent.request.dto';
 
 export interface IAgentRepository {
   createPendingAgent(
@@ -14,4 +14,5 @@ export interface IAgentRepository {
     req: AgentRegistrationApproveRequestDto,
     approvingAdminId: number
   ): Promise<AgentProfile>;
+  rateAgentAsync(req: Rating): Promise<void>;
 }

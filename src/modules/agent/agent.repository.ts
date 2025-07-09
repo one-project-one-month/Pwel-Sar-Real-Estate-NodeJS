@@ -1,13 +1,14 @@
-import { injectable } from "tsyringe";
-import { IAgentRepository } from "./interfaces/agent.repo.interface";
+import { injectable } from 'tsyringe';
+import { IAgentRepository } from './interfaces/agent.repo.interface';
 import {
   AgentRegisterRequestDto,
   AgentRegistrationApproveRequestDto,
-} from "./dtos/agent.request.dto";
-import { AgentProfile } from "entities";
-import { prisma } from "libs/prismaClients";
-import { AppError } from "utils/error-handling";
-import { AgentProfileStatus } from "../../../generated/prisma";
+} from './dtos/agent.request.dto';
+import { AgentProfile, Rating } from 'entities';
+import { prisma } from 'libs/prismaClients';
+import { AppError, catchErrorAsync } from 'utils/error-handling';
+import { AgentProfileStatus } from '../../../generated/prisma';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @injectable()
 export class AgentRepository implements IAgentRepository {
@@ -22,7 +23,7 @@ export class AgentRepository implements IAgentRepository {
     });
 
     if (!matchedUser) {
-      throw AppError.new("notFound", "No user record found.");
+      throw AppError.new('notFound', 'No user record found.');
     }
 
     const newAgent = await prisma.agentProfile.create({
@@ -47,7 +48,7 @@ export class AgentRepository implements IAgentRepository {
     });
 
     if (!existingAgent) {
-      throw AppError.new("notFound", "No registration record found.");
+      throw AppError.new('notFound', 'No registration record found.');
     }
 
     const adminExists = await prisma.user.findUnique({
@@ -55,7 +56,7 @@ export class AgentRepository implements IAgentRepository {
     });
 
     if (!adminExists) {
-      throw AppError.new("notFound", "Approving admin not found.");
+      throw AppError.new('notFound', 'Approving admin not found.');
     }
 
     const updatedAgent = await prisma.agentProfile.update({
@@ -78,5 +79,32 @@ export class AgentRepository implements IAgentRepository {
     });
 
     return agentProfile;
+  }
+
+  async rateAgentAsync(rating: Rating): Promise<void> {
+    // eslint-disable-next-line no-unused-vars
+    const [errors, newRating] = await catchErrorAsync(
+      prisma.rating.create({
+        data: {
+          agentId: rating.agentId,
+          point: rating.point,
+          userId: rating.userId,
+        },
+      })
+    );
+
+    if (errors) {
+      switch ((errors as PrismaClientKnownRequestError).code) {
+        case 'P2002':
+          throw AppError.new('alreadyExist', 'Rating already exists.');
+        case 'P2003':
+          throw AppError.new('notFound', 'User or agent not found.');
+        default:
+          throw AppError.new(
+            'internalErrorServer',
+            'Something went wrong on the server.'
+          );
+      }
+    }
   }
 }

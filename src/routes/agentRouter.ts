@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import validationMiddlewate from 'middlewares/validationMiddlewate';
+import validationMiddleware from 'middlewares/validationMiddlewate';
 import AgentController from 'modules/agent/agent.controller';
-import { createRatingReqBodySchema } from 'modules/agent/api/body/createRatingSchema';
-import ratingController from 'modules/agent/api/controller/RatingController';
+import { createRatingReqBodySchema } from 'modules/agent/validations/createRatingSchema';
 import { container } from 'tsyringe';
 
 const agentRouter = Router();
@@ -10,7 +9,7 @@ const agentController = container.resolve(AgentController);
 
 agentRouter.post(
   '/register',
-  agentController.registerAgentAsync.bind(agentController)
+  agentController.registerAgent.bind(agentController)
 );
 
 agentRouter.patch(
@@ -19,9 +18,9 @@ agentRouter.patch(
 );
 
 agentRouter.post(
-  '/ratings/create',
-  validationMiddlewate.validateRequestBody(createRatingReqBodySchema),
-  ratingController.create
+  '/:id/rate',
+  validationMiddleware.validateRequestBody(createRatingReqBodySchema),
+  agentController.rateAgent.bind(agentController)
 );
 
 export default agentRouter;

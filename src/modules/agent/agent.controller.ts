@@ -9,7 +9,6 @@ import { IAgentUseCase } from './interfaces/agent.usecase.interface';
 @injectable()
 export default class AgentController {
   constructor(
-    // eslint-disable-next-line no-unused-vars
     @inject('IAgentUseCase') private readonly _agentUseCase: IAgentUseCase
   ) {}
 
@@ -23,7 +22,7 @@ export default class AgentController {
     const accessToken: Jwt = req.cookies.access_token;
     const approvingAdminId: number = accessToken
       ? getUserIdByJwtToken(accessToken)
-      : 39;
+      : 1;
     const { id } = req.params;
     const agentId = parseInt(id, 10);
 
@@ -41,7 +40,7 @@ export default class AgentController {
     return res.status(200).json(modifiedAgent);
   }
 
-  async registerAgentAsync(
+  async registerAgent(
     req: Request,
     res: Response,
     next: NextFunction
@@ -55,5 +54,32 @@ export default class AgentController {
       return;
     }
     return res.status(200).json(pendingAgent);
+  }
+
+  async rateAgent(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<any> {
+    const { id } = req.params;
+    const agentId = parseInt(id, 10);
+
+    // not yet implemented really
+    const token: Jwt = req.cookies['access_token'];
+    const ratingUserId = getUserIdByJwtToken(token);
+
+    const [error, _] = await catchErrorAsync(
+      this._agentUseCase.rateAgentAsync({
+        agentId: agentId,
+        point: req.body.point,
+        userId: ratingUserId,
+      })
+    );
+
+    if (error) {
+      return next(error);
+    }
+
+    return res.sendStatus(200);
   }
 }

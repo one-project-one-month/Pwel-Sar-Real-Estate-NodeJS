@@ -1,5 +1,5 @@
-import { UserRegistrationRequestDto } from "modules/auth/dtos/auth.request.dto";
-import { AgentProfileStatus } from "../../../../generated/prisma";
+import { UserRegistrationRequestDto } from 'modules/auth/dtos/auth.request.dto';
+import { AgentProfileStatus } from '../../../../generated/prisma';
 
 interface AgentRegisterRequestDtoParams {
   cnaNumber: string;
@@ -29,4 +29,9 @@ export class AgentRegistrationApproveRequestDto {
   constructor(params: AgentRegistrationApproveRequestDtoParams) {
     this.status = params.status;
   }
+}
+export interface RatingPayload {
+  agentId: number;
+  point: number;
+  userId: number;
 }
