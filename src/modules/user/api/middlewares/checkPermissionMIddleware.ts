@@ -11,15 +11,8 @@ export const checkPermissionMiddleware = (permission: { resource: string; action
       const roleID = 1 //TODO: get user role;
       if (!roleID) throw AppError.new(errorKinds.notAuthorized, "Missing user role");
 
-      const isAllowed = await checkPermissionUseCase.execute({
-        roleID,
-        resource: permission.resource,
-        action: permission.action,
-      });
-
-      if (!isAllowed) {
-        throw AppError.new(errorKinds.forbidden, "User not allowed to perform this action");
-      }
+      const hasPermission = await checkPermissionUseCase.execute({ roleID, ...permission });
+      if (!hasPermission) throw AppError.new(errorKinds.forbidden, "You don't have permission");
 
       next();
     } catch (e) {
