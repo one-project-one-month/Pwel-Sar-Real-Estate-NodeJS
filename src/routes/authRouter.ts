@@ -30,8 +30,12 @@ authRouter.post(
   authController.logout
 );
 
-// authRouter.get('get-user', passport.authenticate('access-jwt'), (req, res) => {
-//     user =
-// });
+authRouter.get(
+  '/get-user',
+  passport.authenticate('access-jwt', { session: false }),
+  authController.getUser
+);
+
+authRouter.post('/refresh', authController.refreshToken);
 
 export default authRouter;

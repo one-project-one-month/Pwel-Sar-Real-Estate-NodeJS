@@ -91,15 +91,13 @@ export class AuthRepository implements IAuthRepository {
     });
   }
 
-  async findToken(userId: number): Promise<null | Token> {
+  async findToken(refreshToken: string): Promise<null | Token> {
     const token = await prisma.refreshToken.findFirst({
-      where: { userId: userId },
+      where: { token: refreshToken },
     });
 
     if (!token) return null;
 
-    const refreshToken = new Token(token.id, token.token, token.userId);
-
-    return refreshToken;
+    return new Token(token.id, token.token, token.userId);
   }
 }

@@ -47,7 +47,7 @@ export const signRefreshToken = (user: any): string => {
   const payload = {
     email: user.email,
     id: user.id,
-    tokenType: 'refresh',
+    roleId: user.roleId,
   };
   const token = jwt.sign(payload, REFRESH_TOKEN_PRIVATE_KEY, options);
   return token;
