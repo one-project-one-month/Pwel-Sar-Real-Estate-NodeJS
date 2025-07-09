@@ -3,13 +3,12 @@ import { getUserIdByJwtToken } from 'helpers/cookies.helper';
 import { Jwt } from 'jsonwebtoken';
 import { inject, injectable } from 'tsyringe';
 import { catchErrorAsync } from 'utils/error-handling';
-
-import { IAgentUseCase } from './interfaces/agent.usecase.interface';
+import { IAgentUsecase } from './interfaces/agent.usecase.interface';
 
 @injectable()
 export default class AgentController {
   constructor(
-    @inject('IAgentUseCase') private readonly _agentUseCase: IAgentUseCase
+    @inject('IAgentUsecase') private readonly _agentUseCase: IAgentUsecase
   ) {}
 
   async approveOrRejectAgentRegistration(

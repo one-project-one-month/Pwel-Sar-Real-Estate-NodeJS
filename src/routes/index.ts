@@ -1,16 +1,23 @@
+import 'reflect-metadata';
 import { Router } from 'express';
 import { NextFunction, Request, Response } from 'express';
-import { checkPermissionMiddleware } from 'modules/user/api/middlewares/checkPermissionMIddleware';
 import { AppError, errorKinds } from 'utils/error-handling';
 
 import agentRouter from './agentRouter';
 import authRouter from './authRouter';
 import userRouter from './userRouter';
+import { CheckPermissionMiddleware } from 'middlewares/checkPermissionMIddleware';
+import { container } from 'tsyringe';
 
 const router = Router();
+const checkPermissionMiddleware = container.resolve(CheckPermissionMiddleware);
+
 router.get(
   '/healthCheck',
-  checkPermissionMiddleware({ action: 'edit', resource: 'property' }),
+  checkPermissionMiddleware.checkPermissionMiddleware({
+    action: 'edit',
+    resource: 'property',
+  }),
   async (req: Request, res: Response) => {
     res.sendStatus(200);
   }

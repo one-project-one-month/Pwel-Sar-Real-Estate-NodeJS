@@ -1,29 +1,27 @@
-import { AppError, catchError } from 'utils/error-handling';
+import { AppError } from 'utils/error-handling';
 import {
   AgentRegisterRequestDto,
   AgentRegistrationApproveRequestDto,
 } from './dtos/agent.request.dto';
 import { AgentResponseDto } from './dtos/agent.response.dto';
-import { IAgentUseCase } from './interfaces/agent.usecase.interface';
-import { validateAgentCredentials } from 'utils/validation.helper';
+import { IAgentUsecase } from './interfaces/agent.usecase.interface';
 import { inject, injectable } from 'tsyringe';
 import { IAgentRepository } from './interfaces/agent.repo.interface';
-import { IAuthUseCase } from 'modules/auth/interfaces/auth.usecase.interface';
+import { IAuthUsecase } from 'modules/auth/interfaces/auth.usecase.interface';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Rating } from 'entities';
 
 @injectable()
-export class AgentUseCase implements IAgentUseCase {
+export class AgentUseCase implements IAgentUsecase {
   constructor(
     @inject('IAgentRepository') private readonly _agentRepo: IAgentRepository,
-    @inject('IAuthUseCase') private readonly _authUsecase: IAuthUseCase
+    @inject('IAuthUsecase') private readonly _authUsecase: IAuthUsecase
   ) {}
 
   async registerAgentAsync(
     req: AgentRegisterRequestDto
   ): Promise<AgentResponseDto> {
     // validate agent credentials (detailed logics for later)
-    catchError(() => validateAgentCredentials());
 
     console.log('calling user register');
     console.log('usecase: recieved request: ', req);

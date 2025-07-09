@@ -1,15 +1,15 @@
-import { User } from 'modules/user/domain/entitiies/User.entity';
-import {
-  GetAllRequestType,
-  GetUserListReturnType,
-  IUserRepository,
-} from 'modules/user/domain/repositories';
+import { User } from 'entities';
 import { AppError, catchErrorAsync } from 'utils/error-handling';
 
-import { prisma } from '../../../../libs/prismaClients';
+import { IUserRepository } from 'modules/user/interfaces/user.repo.interface';
+import { GetAllUserRequestDto } from 'modules/user/dtos/user.request.dto';
+import { GetAllUserResponseDto } from 'modules/user/dtos/user.response.dto';
+import { prisma } from 'libs/prismaClients';
+import { injectable } from 'tsyringe';
 
+@injectable()
 export class UserRepository implements IUserRepository {
-  async create(data: any): Promise<User> {
+  async createUserAsync(data: any): Promise<User> {
     //:TODO change any
     const user = await prisma.user.create({ data });
     const newUser = new User({
@@ -24,7 +24,7 @@ export class UserRepository implements IUserRepository {
     return newUser;
   }
 
-  async findById(id: number): Promise<User> {
+  async findUserById(id: number): Promise<User> {
     try {
       const user = await prisma.user.findUnique({ where: { id } });
       if (!user) {
@@ -48,7 +48,9 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  async getAll(parmas: GetAllRequestType): Promise<GetUserListReturnType> {
+  async getAllUsersAsync(
+    parmas: GetAllUserRequestDto
+  ): Promise<GetAllUserResponseDto> {
     const { limit = 20, page = 0 } = parmas;
     const [errors, result] = await catchErrorAsync(
       prisma.$transaction([
@@ -90,7 +92,7 @@ export class UserRepository implements IUserRepository {
     };
   }
 
-  async update(data: any): Promise<User> {
+  async updateUserAsync(data: any): Promise<User> {
     //:TODO change any
     const user = await prisma.user.update({ data, where: { id: data.id } });
     const updatedUser = new User({
@@ -105,7 +107,7 @@ export class UserRepository implements IUserRepository {
     return updatedUser;
   }
 
-  private getListFilter = (params: GetAllRequestType) => {
+  private getListFilter = (params: GetAllUserRequestDto) => {
     const { searchBy, searchKeyword } = params;
     return searchBy
       ? {

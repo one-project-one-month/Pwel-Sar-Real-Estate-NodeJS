@@ -1,6 +1,6 @@
+import 'reflect-metadata';
 import './config/env/dotenv';
 import './config/passport.config';
-import 'reflect-metadata';
 import './config/env/dotenv';
 import './config/di.container';
 

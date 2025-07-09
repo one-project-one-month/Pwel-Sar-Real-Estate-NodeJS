@@ -1,5 +1,6 @@
+import 'reflect-metadata';
 import { Router } from 'express';
-import validationMiddleware from 'middlewares/validationMiddlewate';
+import validationMiddleware from 'middlewares/validationMiddleware';
 import AgentController from 'modules/agent/agent.controller';
 import { createRatingReqBodySchema } from 'modules/agent/validations/createRatingSchema';
 import { container } from 'tsyringe';

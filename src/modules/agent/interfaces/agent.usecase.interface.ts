@@ -6,7 +6,7 @@ import {
 } from '../dtos/agent.request.dto';
 import { AgentResponseDto } from '../dtos/agent.response.dto';
 
-export interface IAgentUseCase {
+export interface IAgentUsecase {
   approveOrRejectAgentRegistrationAsync(
     agentId: number,
     req: AgentRegistrationApproveRequestDto,
