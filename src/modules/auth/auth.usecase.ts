@@ -11,7 +11,7 @@ import bcrypt from 'bcrypt';
 import { generateTokens } from 'utils/auth/auth.service';
 
 @injectable()
-export default class AuthUseCase implements IAuthUsecase {
+export default class AuthUsecase implements IAuthUsecase {
   constructor(
     @inject('IAuthRepository') private readonly _authRepo: IAuthRepository
   ) {}

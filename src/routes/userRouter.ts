@@ -8,4 +8,6 @@ const userController = container.resolve(UserController);
 
 userRouter.get('/', userController.getAllUsersAsync.bind(userController));
 
+userRouter.get('/', userController.getAllUsersAsync.bind(userController));
+
 export default userRouter;

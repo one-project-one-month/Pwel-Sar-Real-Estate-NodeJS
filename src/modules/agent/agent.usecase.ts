@@ -12,7 +12,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Rating } from 'entities';
 
 @injectable()
-export class AgentUseCase implements IAgentUsecase {
+export class AgentUsecase implements IAgentUsecase {
   constructor(
     @inject('IAgentRepository') private readonly _agentRepo: IAgentRepository,
     @inject('IAuthUsecase') private readonly _authUsecase: IAuthUsecase
