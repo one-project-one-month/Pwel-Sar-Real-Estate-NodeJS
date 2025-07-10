@@ -7,6 +7,7 @@ import AppConfig from "config/env/app-config";
 
 const app = express();
 const port = AppConfig.getConfig("PORT");
+app.use(express.json());
 
 app.use(cors());
 app.use(cookieParser());
