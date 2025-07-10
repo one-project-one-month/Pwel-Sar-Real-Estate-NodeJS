@@ -2,13 +2,11 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.removeUnusedImports": true,
-    "source.fixAll.eslint": true
+    "source.removeUnusedImports": "explicit",
+    "source.fixAll.eslint": "explicit"
   },
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
-  ]
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
+
 }
