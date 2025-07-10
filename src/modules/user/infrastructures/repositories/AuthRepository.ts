@@ -30,11 +30,35 @@ export class AuthRepository implements IAuthRepository {
     refreshToken: string;
     userId: number;
   }): Promise<Token> {
-    const token = await prisma.refreshToken.create({
-      data: {
+    // First check if a token already exists for this user
+    const existingToken = await prisma.refreshToken.findFirst({
+      where: { userId: data.userId },
+    });
+
+    // let token;
+    // if (existingToken) {
+    //   // Update existing token
+    //   token = await prisma.refreshToken.update({
+    //     where: { id: existingToken.id },
+    //     data: { token: data.refreshToken },
+    //   });
+    // } else {
+    //   // Create new token
+    //   token = await prisma.refreshToken.create({
+    //     data: {
+    //       token: data.refreshToken,
+    //       userId: data.userId,
+    //     },
+    //   });
+    // }
+
+    const token = await prisma.refreshToken.upsert({
+      create: {
         token: data.refreshToken,
         userId: data.userId,
       },
+      update: { token: data.refreshToken },
+      where: { token: existingToken?.token },
     });
 
     if (!token)
