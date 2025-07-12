@@ -1,4 +1,3 @@
-import { prisma } from "libs/prismaClients";
 import { GetOwnerListParamType } from "modules/user/api/params/getOwnerListParam";
 import { GetAllOwnerRequestType, IPropertyOwnerRepository } from "modules/user/domain/repositories/IOwnerRepository";
 import { catchErrorAsync } from "utils/error-handling/CatchError";
@@ -37,7 +36,7 @@ export class GetPropertyOwnerByIdUseCase implements IPropertyOwnerCase{
     constructor (private readonly OwnerRepo : IPropertyOwnerRepository){}
 
         async execute(id:number): Promise<OwnerDTO>{
-            const [owner, error] = await  catchErrorAsync(this.OwnerRepo.findById(id))
+            const [ error, owner] = await  catchErrorAsync(this.OwnerRepo.findById(id))
             if(error) throw error;
             return new OwnerDTO(owner)
         }    
@@ -50,21 +49,14 @@ export class CreatePropertyOwnerUseCase implements IPropertyOwnerCase{
         console.log("Received param for creation:", param);
 
      
-        const user = await prisma.user.findUnique({
-            where: { email: param.userEmail } 
-        });
-
-        if (!user) {
-            throw new Error("User not found with given identifier");
-        }
-
+        
         const createData = {
             nrcNo: param.nrcNo,
             address: param.address,
             userId: param.userId
         };
 
-        const [owner, error] = await catchErrorAsync(this.OwnerRepo.create(createData));
+        const [ error, owner ] = await catchErrorAsync(this.OwnerRepo.create(createData));
         if (error) throw error;
         return new OwnerDTO(owner);
     }

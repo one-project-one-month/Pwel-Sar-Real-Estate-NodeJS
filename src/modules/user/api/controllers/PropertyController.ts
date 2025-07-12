@@ -60,7 +60,7 @@ class OwnerController {
       
           const { nrcNo, address } = req.body;
       
-          const result = await createPropertyOwnerUseCase.execute({ nrcNo, address, userId });
+          const result = await catchErrorAsync(createPropertyOwnerUseCase.execute({ nrcNo, address, userId }));
       
           res.status(200).json(result);
         } catch (error) {
