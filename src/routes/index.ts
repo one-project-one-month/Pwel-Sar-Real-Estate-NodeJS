@@ -5,6 +5,7 @@ import { AppError, errorKinds } from 'utils/error-handling';
 
 import agentRouter from './agentRouter';
 import authRouter from './authRouter';
+import passwordResetRouter from './passwordResetRouter';
 import userRouter from './userRouter';
 
 const router = Router();
@@ -20,6 +21,7 @@ router.get(
 router.use('/users', userRouter);
 router.use('/auth', authRouter);
 router.use('/agent-profiles', agentRouter);
+router.use('/forgot-password', passwordResetRouter);
 
 //404 handler
 router.use((req: Request, res: Response, next: NextFunction) => {
