@@ -11,6 +11,7 @@ const routes_1 = __importDefault(require("routes"));
 const app_config_1 = __importDefault(require("config/env/app-config"));
 const app = (0, express_1.default)();
 const port = app_config_1.default.getConfig("PORT");
+app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.use((0, cookie_parser_1.default)());
 app.use('/api', routes_1.default);

@@ -15,12 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const error_handling_1 = require("utils/error-handling");
 const userRouter_1 = __importDefault(require("./userRouter"));
+const ownerRoute_1 = __importDefault(require("./ownerRoute"));
 const router = (0, express_1.Router)();
 router.get("/healthCheck", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     next(error_handling_1.AppError.new(error_handling_1.errorKinds.internalServerError, "internal Server Error"));
 }));
 //register route
 router.use('/users', userRouter_1.default);
+router.use('/owner', ownerRoute_1.default);
 //404 handler
 router.use((req, res, next) => {
     // send 404 error
