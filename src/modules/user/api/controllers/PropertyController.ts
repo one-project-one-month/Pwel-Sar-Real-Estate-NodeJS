@@ -5,7 +5,14 @@ import { catchErrorAsync } from "utils/error-handling/CatchError";
 import { GetOwnerListParamType } from "../params/getOwnerListParam";
 import { AppError, errorKinds } from "utils/error-handling/AppError";
 
-
+export interface AuthenticatedRequest extends Request {
+    user?: {
+      id: number;
+      email: string;
+      roleId: number;
+    };
+  }
+  
   
 
 const getPropertyOwnerList = new GetOwnerListUseCase(new PropertyOwnerRepository())
@@ -42,11 +49,28 @@ class OwnerController {
         res.status(200).json(owner);
     }
 
-    async create(req:Request, res:Response, next:NextFunction){
-        const [owner, error] = await catchErrorAsync(createPropertyOwnerUseCase.execute(req.body))
-        if (error) return next(error);
-        res.status(200).json(owner);
-    }
+    async create(req: Request, res: Response, next: NextFunction) {
+        try {
+          const authReq = req as AuthenticatedRequest;
+          const userId = authReq.user?.id;
+      
+          if (!userId) {
+            return next(AppError.new(errorKinds.notAuthorized, "User not authenticated"));
+          }
+      
+          const { nrcNo, address } = req.body;
+      
+          const result = await createPropertyOwnerUseCase.execute({ nrcNo, address, userId });
+      
+          res.status(200).json(result);
+        } catch (error) {
+          console.error("Error in ownerController.create:", error);
+          next(error instanceof AppError
+            ? error
+            : AppError.new(errorKinds.internalServerError, "Unexpected error during owner creation")
+          );
+        }
+      }
       
 }
 

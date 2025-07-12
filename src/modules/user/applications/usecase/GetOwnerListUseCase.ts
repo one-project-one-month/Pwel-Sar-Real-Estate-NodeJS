@@ -59,8 +59,9 @@ export class CreatePropertyOwnerUseCase implements IPropertyOwnerCase{
         }
 
         const createData = {
-            ...param,
-            userId: user.id
+            nrcNo: param.nrcNo,
+            address: param.address,
+            userId: param.userId
         };
 
         const [owner, error] = await catchErrorAsync(this.OwnerRepo.create(createData));
