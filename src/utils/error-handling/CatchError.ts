@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 export const catchErrorAsync = <T, E extends new (...args: any[]) => Error>(
   promise: Promise<T>,
   ErrorInstance?: E[]
-): Promise<[undefined, T] | [Error]> => {
+): Promise<[Error] | [undefined, T]> => {
   return promise
     .then((data) => [undefined, data] as [undefined, T])
-    .catch((err) => { 
+    .catch((err) => {
       if (ErrorInstance === undefined) return [err];
       if (ErrorInstance.some((errorinstance) => err instanceof errorinstance))
         return [err];
@@ -16,17 +17,17 @@ export const catchErrorAsync = <T, E extends new (...args: any[]) => Error>(
 export const catchError = <T, E extends new (...args: any[]) => Error>(
   fn: () => T,
   ErrorInstance?: E[]
-): [undefined, T] | [Error] => {
+): [Error] | [undefined, T] => {
   try {
     return [undefined, fn()];
   } catch (err) {
     if (ErrorInstance === undefined) return [err as Error];
-    if (ErrorInstance.some((errorinstance) => err instanceof errorinstance)) return [err as Error];
+    if (ErrorInstance.some((errorinstance) => err instanceof errorinstance))
+      return [err as Error];
     if (err instanceof Error) return [err];
     throw err;
   }
 };
-
 
 export const tryAndThrow = async <Arg extends any[]>(
   fn: (...arg: Arg) => Promise<any>
