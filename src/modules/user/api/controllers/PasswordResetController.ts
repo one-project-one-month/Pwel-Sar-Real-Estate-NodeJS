@@ -27,6 +27,9 @@ export class PasswordResetController {
       return;
     }
 
+    //TODO: send otp via email and response just success message
+
+    // res.status(201).json({ message: 'OTP sent successfully' });
     res.status(201).json({ token: result });
   }
 }
