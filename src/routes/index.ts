@@ -5,8 +5,8 @@ import { AppError, errorKinds } from 'utils/error-handling';
 
 import agentRouter from './agentRouter';
 import authRouter from './authRouter';
-import userRouter from './userRouter';
 import ownerRoute from './ownerRoute';
+import userRouter from './userRouter';
 
 const router = Router();
 router.get(
@@ -19,7 +19,11 @@ router.get(
 
 //register route
 
-router.use('/owner',ownerRoute)
+router.use(
+  '/owner',
+  //   passport.authenticate('jwt-access', { session: false }),
+  ownerRoute
+);
 router.use('/users', userRouter);
 router.use('/auth', authRouter);
 router.use('/agent-profiles', agentRouter);

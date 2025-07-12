@@ -3,11 +3,10 @@ import { LogoutUseCase } from 'modules/user/applications/usecase/auth/LogoutUseC
 import { RegisterUseCase } from 'modules/user/applications/usecase/auth/RegisterUseCase';
 import { AppError, catchErrorAsync, errorKinds } from 'utils/error-handling';
 
+import { Container } from '../di/Container';
 // import { AuthRepository } from 'modules/user/infrastructures/repositories/AuthRepository';
 import { LoginUseCase } from './../../applications/usecase/auth/LoginUseCase';
 import { RefreshAccessTokenUseCase } from './../../applications/usecase/auth/RefreshAccessTokenUseCase';
-
-import { Container } from '../di/Container';
 export class AuthController {
   async create(req: Request, res: Response, next: NextFunction) {
     const { email, password, username } = req.body;
