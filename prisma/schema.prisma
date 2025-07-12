@@ -36,12 +36,25 @@ model User {
   photos     UserPhoto[]
   ratings    Rating[]
 
-  refreshTokens RefreshToken[] @relation("TokenUser")
+  passwordResetTokens PasswordResetToken[] @relation("ResetToken")
+  refreshTokens       RefreshToken[]       @relation("TokenUser")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("user")
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  expiresAt DateTime
+  userId    Int      @unique
+  user      User     @relation("ResetToken", fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_token")
 }
 
 model RefreshToken {
