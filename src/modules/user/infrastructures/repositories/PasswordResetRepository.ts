@@ -1,5 +1,7 @@
+import bcrypt from 'bcrypt';
 import { prisma } from 'libs/prismaClients';
 import { PasswordResetToken } from 'modules/user/domain/entitiies/PasswordResetToken';
+import { User } from 'modules/user/domain/entitiies/User.entity';
 import { IPasswordResetRepository } from 'modules/user/domain/repositories/IPasswordResetRepository';
 import { AppError } from 'utils/error-handling';
 
@@ -30,6 +32,11 @@ export class PasswordResetRepository implements IPasswordResetRepository {
       token.createdAt
     );
   }
+  async deleteTokenByUserId(id: number): Promise<void> {
+    await prisma.passwordResetToken.delete({
+      where: { userId: id },
+    });
+  }
   async findTokenByUserId(id: number): Promise<null | PasswordResetToken> {
     const token = await prisma.passwordResetToken.findUnique({
       where: {
@@ -46,5 +53,24 @@ export class PasswordResetRepository implements IPasswordResetRepository {
       token.userId,
       token.createdAt
     );
+  }
+  async passwordReset(data: {
+    newPassword: string;
+    userId: number;
+  }): Promise<User> {
+    const hashedPassword = await bcrypt.hash(data.newPassword, 10);
+
+    const updatedUser = await prisma.user.update({
+      data: { password: hashedPassword },
+      where: { id: data.userId },
+    });
+
+    if (!updatedUser)
+      throw AppError.new(
+        'internalErrorServer',
+        'Failed to reset user password'
+      );
+
+    return new User(updatedUser);
   }
 }
