@@ -3,16 +3,6 @@ import { Property } from 'modules/property/domain/entities/Property.entity';
 import { Post, PostStatus, PostType } from '../entities/Post.entity';
 /* eslint-disable no-unused-vars */
 export interface createPendingPostRequestType {
-  phone: string;
-  property: Property;
-  propertyId: number;
-  socialLink: null | string;
-  status?: PostStatus;
-  type: PostType;
-  userId: number;
-}
-
-export interface createPendingPropertyRequestType {
   bathRoom: number;
   bedRoom: number;
   buildingNumber: string; // Changed from Int to String
@@ -20,23 +10,27 @@ export interface createPendingPropertyRequestType {
   currency: string; // Changed from Int to String (e.g., "USD")
   floor: number;
   latitude: string; // Consider using Float or Decimal
+
   length: number; // Fixed typo from "lenth"
   longitude: string; // Consider using Float or Decimal
   ownerId: number;
-  phone?: string; // Optional field
+  phone: string;
+  property: Property;
+  propertyId: number;
   propertyTypeId: number;
   region: string;
-  socialLink: string;
-  status: string;
+  socialLink: null | string;
+  status?: PostStatus;
   street: string;
   township: string;
+  type: PostType;
+  userId: number;
   width: number;
 }
 
 export interface IPostRepository {
   createPendingPost(
-    params: createPendingPostRequestType,
-    property: createPendingPropertyRequestType
+    params: createPendingPostRequestType
   ): Promise<Post & Property>;
   updatePostStatus(params: updatePostStatusRequestType): Promise<Post>;
 }
@@ -50,3 +44,24 @@ export interface updatePostStatusRequestType {
   postId: number;
   status: PostStatus;
 }
+
+// export interface createPendingPropertyRequestType {
+//   bathRoom: number;
+//   bedRoom: number;
+//   buildingNumber: string; // Changed from Int to String
+//   createdAt: Date;
+//   currency: string; // Changed from Int to String (e.g., "USD")
+//   floor: number;
+//   latitude: string; // Consider using Float or Decimal
+//   length: number; // Fixed typo from "lenth"
+//   longitude: string; // Consider using Float or Decimal
+//   ownerId: number;
+//   phone?: string; // Optional field
+//   propertyTypeId: number;
+//   region: string;
+//   socialLink: string;
+//   status: string;
+//   street: string;
+//   township: string;
+//   width: number;
+// }

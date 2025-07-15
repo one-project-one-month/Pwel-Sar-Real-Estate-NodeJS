@@ -2,15 +2,15 @@
 import { Property } from '../../../property/domain/entities/Property.entity';
 
 export enum PostStatus {
-  ACTIVE = 'active',
-  PENDING = 'pending',
-  RENTED = 'rented',
-  SOLD = 'sold',
+  Active = 'Active',
+  Pending = 'Pending',
+  Rented = 'Rented',
+  Sold = 'Sold',
 }
 
 export enum PostType {
-  RENT = 'rent',
-  SALE = 'sale',
+  Rent = 'Rent',
+  Sale = 'Sale',
 }
 
 interface IPost {

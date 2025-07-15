@@ -1,10 +1,10 @@
 import { prisma } from 'libs/prismaClients';
-import { Post, PostStatus } from 'modules/post/domain/entities/Post.entity';
+import { Post } from 'modules/post/domain/entities/Post.entity';
 import {
   createPendingPostRequestType,
-  createPendingPropertyRequestType,
   IPostRepository,
 } from 'modules/post/domain/repositories';
+import { Property } from 'modules/property/domain/entities/Property.entity';
 import { AppError, catchErrorAsync } from 'utils/error-handling';
 
 export class PostRepository implements IPostRepository {
@@ -55,8 +55,8 @@ export class PostRepository implements IPostRepository {
   // create a post using prisma $transaction
 
   async createPendingPost(
-    post: createPendingPostRequestType,
-    property: createPendingPropertyRequestType
+    post: createPendingPostRequestType
+    // property: createPendingPropertyRequestType
   ): Promise<Post> {
     const [error, newPost] = await catchErrorAsync(
       prisma.$transaction(async (tx) => {
@@ -65,7 +65,7 @@ export class PostRepository implements IPostRepository {
             phone: post.phone,
             propertyId: post.propertyId,
             socialLink: post.socialLink,
-            status: PostStatus.PENDING,
+            status: post.status ?? 'Pending',
             type: post.type,
             userId: post.userId,
           },
@@ -73,20 +73,20 @@ export class PostRepository implements IPostRepository {
 
         const createProperty = tx.property.create({
           data: {
-            bathRoom: property.bathRoom,
-            bedRoom: property.bedRoom,
-            buildingNumber: property.buildingNumber,
-            currency: property.currency,
-            floor: property.floor,
-            latitude: property.latitude,
-            length: property.length,
-            longitude: property.longitude,
-            ownerId: property.ownerId,
-            propertyTypeId: property.propertyTypeId,
-            region: property.region,
-            street: property.street,
-            township: property.township,
-            width: property.width,
+            bathRoom: post.bathRoom,
+            bedRoom: post.bedRoom,
+            buildingNumber: post.buildingNumber,
+            currency: post.currency,
+            floor: post.floor,
+            latitude: post.latitude,
+            length: post.length,
+            longitude: post.longitude,
+            ownerId: post.ownerId,
+            propertyTypeId: post.propertyTypeId,
+            region: post.region,
+            street: post.street,
+            township: post.township,
+            width: post.width,
           },
         });
 
@@ -98,12 +98,9 @@ export class PostRepository implements IPostRepository {
         'internalErrorServer',
         'prisma error: while creating post'
       );
-    return {
+    return new Post({
       ...newPost.createPost,
-      ...newPost.createProperty,
-      property: newPost.createProperty,
-      status: newPost.createPost.status,
-      type: newPost.createPost,
-    };
+      property: new Property(newPost.createProperty),
+    });
   }
 }
