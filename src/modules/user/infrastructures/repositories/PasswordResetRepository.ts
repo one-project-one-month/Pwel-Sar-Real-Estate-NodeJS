@@ -10,10 +10,17 @@ export class PasswordResetRepository implements IPasswordResetRepository {
     token: string;
     userId: number;
   }): Promise<PasswordResetToken> {
-    const token = await prisma.passwordResetToken.create({
-      data: {
+    const token = await prisma.passwordResetToken.upsert({
+      create: {
         expiresAt: new Date(Date.now() + 60000), // expires in 1 minute
         token: data.token,
+        userId: data.userId,
+      },
+      update: {
+        expiresAt: new Date(Date.now() + 60000), // expires in 1 minute
+        token: data.token,
+      },
+      where: {
         userId: data.userId,
       },
     });
