@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-vars */
-import { Property } from './Property.entity';
+import { Property } from '../../../property/domain/entities/Property.entity';
 
-enum PostStatus {
+export enum PostStatus {
   ACTIVE = 'active',
   PENDING = 'pending',
   RENTED = 'rented',
   SOLD = 'sold',
 }
 
-enum PostType {
+export enum PostType {
   RENT = 'rent',
   SALE = 'sale',
 }
