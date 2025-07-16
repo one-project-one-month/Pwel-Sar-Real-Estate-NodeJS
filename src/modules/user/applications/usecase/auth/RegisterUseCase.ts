@@ -26,7 +26,7 @@ export class RegisterUseCase implements IUser {
         email: data.email,
         id: data.id,
         password: data.password,
-        roleId: data.roleId ?? 1,
+        roleId: data.roleId ?? 2,
         updatedAt: new Date(),
         username: data.username,
       })

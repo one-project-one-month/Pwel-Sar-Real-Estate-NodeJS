@@ -4,5 +4,5 @@ node_modules
 .env.development
 
 /generated/prisma
-
+post_module_fixes_and_postman_example.txt
 /dist
