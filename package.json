@@ -5,7 +5,8 @@
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node ./dist/src/server.js",
-    "dev": "tsx watch --env-file=.env.development ./src/server.ts"
+    "dev": "tsx watch --env-file=.env.development ./src/server.ts",
+    "dev:imageWorker": "npx ts-node src/jobs/runWorker.ts"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -18,7 +19,8 @@
     "@prisma/client": "^6.10.1",
     "@prisma/extension-accelerate": "^2.0.1",
     "bcrypt": "^6.0.0",
-    "bullmq": "^5.56.0",
+    "bullmq": "^5.56.4",
+    "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.0.0",
@@ -34,6 +36,7 @@
     "sharp": "^0.34.2",
     "socket.io": "^4.8.1",
     "tsyringe": "^4.10.0",
+    "winston": "^3.17.0",
     "zod": "^3.25.67"
   },
   "devDependencies": {

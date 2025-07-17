@@ -41,3 +41,7 @@ export const PostUpdateSchema = z.object({
     required_error: 'status is required',
   }),
 });
+
+export const PostsArraySchema = z.object({
+  posts: z.array(PostRegisterSchema),
+});

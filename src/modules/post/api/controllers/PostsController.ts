@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import cloudImageQueue from 'jobs/queqe/cloudImageQueue';
 import RegisterPostUseCase from 'modules/post/application/usecase/RegisterPostUseCase';
 import UpdatePostStatusUseCase from 'modules/post/application/usecase/UpdatePostStatusUseCase';
 import { PostRepository } from 'modules/post/infrastructures/repositories/PostRepository';
@@ -10,11 +11,94 @@ const updatePostStatusUseCase = new UpdatePostStatusUseCase(
 );
 
 class PostsController {
-  async registerPostAsync(req: Request, res: Response, next: NextFunction) {
-    console.log(
-      "POST http://localhost:5500/api/posts/register", req.body);
+  // New: Upload multiple posts for a user using the usecase method
+  registerMultiplePostsAsync = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
-      const result = await registerPostUseCase.execute(req.body);
+      let posts = req.body.posts;
+      if (typeof posts === 'string') {
+        posts = JSON.parse(posts);
+      }
+      if (!Array.isArray(posts)) {
+        res.status(400).json({ message: 'posts array is required' });
+        return;
+      }
+      if (posts.length > 3) {
+        res
+          .status(400)
+          .json({ message: 'You can only upload up to 3 posts at a time.' });
+        return;
+      }
+
+      // Validate image count for each post before processing
+      if (req.files && Array.isArray(req.files)) {
+        for (let i = 0; i < posts.length; i++) {
+          const imagesForPost = req.files.filter(
+            (file) => file.fieldname === `images_${i}`
+          );
+          console.log(imagesForPost);
+          if (imagesForPost.length > 10) {
+            res.status(400).json({
+              message: `Maximum 10 images allowed per post (post index: ${i})`,
+            });
+            return;
+          }
+        }
+      }
+
+      const results = [];
+      for (let i = 0; i < posts.length; i++) {
+        const { post, property } = posts[i];
+        const result = await registerPostUseCase.execute({ post, property });
+        results.push(result);
+        try {
+          // Queue images for this property (fieldname: images_0, images_1, ...)
+          if (req.files && Array.isArray(req.files)) {
+            await this.queueImagesForProperty(
+              req.files,
+              result.property.id,
+              `images_${i}`
+            );
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      res.status(201).json({ message: 'Posts created', posts: results });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  registerPostAsync = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    // console.log('POST http://localhost:5500/api/posts/register', req.body);
+    // console.log('image', req.files);
+    try {
+      const post = req.body.post;
+      const property = req.body.property;
+
+      const result = await registerPostUseCase.execute({ post, property });
+
+      // Image upload queue logic
+      try {
+        if (req.files && Array.isArray(req.files)) {
+          await this.queueImagesForProperty(
+            req.files,
+            result.property.id,
+            'images'
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
       res.status(200).json(result);
     } catch (error) {
       console.log(error);
@@ -27,9 +111,13 @@ class PostsController {
             )
           );
     }
-  }
+  };
 
-  async update(req: Request, res: Response, next: NextFunction): Promise<any> {
+  update = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<any> => {
     try {
       const { id: approvingAdminId }: { id: number } = req.user as {
         id: number;
@@ -55,23 +143,22 @@ class PostsController {
             )
           );
     }
-  }
+  };
 
-  // New: Upload multiple posts for a user using the usecase method
-  async uploadMultiplePosts(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { posts, userId } = req.body;
-      if (!Array.isArray(posts) || !userId) {
-        return res
-          .status(400)
-          .json({ message: 'userId and posts array are required' });
-      }
-      const results = await registerPostUseCase.executeMultiple(userId, posts);
-      res.status(201).json({ message: 'Posts created', posts: results });
-    } catch (error) {
-      next(error);
+  // Helper to queue images for a property by fieldname
+  private queueImagesForProperty = async (
+    files: Express.Multer.File[],
+    propertyId: number,
+    fieldname: string
+  ) => {
+    const images = files.filter((file) => file.fieldname === fieldname);
+    for (const file of images) {
+      await cloudImageQueue.add('upload', {
+        buffer: file.buffer,
+        propertyId,
+      });
     }
-  }
+  };
 }
 
 const postController = new PostsController();

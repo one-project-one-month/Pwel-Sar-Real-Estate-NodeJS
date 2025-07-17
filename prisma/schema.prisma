@@ -112,7 +112,7 @@ model Property {
   currency       String
   postId         Int             @unique
   owner          User            @relation("UserProperty", fields: [ownerId], references: [id])
-  post           Post            @relation(fields: [postId], references: [id])
+  post           Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
   propertyType   PropertyType    @relation(fields: [propertyTypeId], references: [id])
   photos         PropertyPhoto[]
 
@@ -133,8 +133,9 @@ model Permission {
 model PropertyPhoto {
   id         Int      @id @default(autoincrement())
   path       String
+  url        String
   propertyId Int
-  property   Property @relation(fields: [propertyId], references: [id])
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   @@map("property_photo")
 }
