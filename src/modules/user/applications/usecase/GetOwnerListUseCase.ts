@@ -9,9 +9,9 @@ interface IPropertyOwnerCase {
     execute(param: any): Promise<OwnerDTO>
 }
 
-export class GetOwnerListUseCase{
-    constructor (private readonly OwnerRepo : IPropertyOwnerRepository){}
-    async execute(params: GetOwnerListParamType): Promise<Pagination<OwnerDTO[]>>{
+export class GetOwnerListUseCase {
+    constructor(private readonly OwnerRepo: IPropertyOwnerRepository) { }
+    async execute(params: GetOwnerListParamType): Promise<Pagination<OwnerDTO[]>> {
         const pageNum = params.page || 0;
         const limitNum = params.limit || 20;
 
@@ -22,7 +22,7 @@ export class GetOwnerListUseCase{
             limit: limitNum,
         }))
 
-        if(error){
+        if (error) {
             throw error
         }
 
@@ -32,33 +32,63 @@ export class GetOwnerListUseCase{
     }
 }
 
-export class GetPropertyOwnerByIdUseCase implements IPropertyOwnerCase{
-    constructor (private readonly OwnerRepo : IPropertyOwnerRepository){}
+export class GetPropertyOwnerByIdUseCase implements IPropertyOwnerCase {
+    constructor(private readonly OwnerRepo: IPropertyOwnerRepository) { }
 
-        async execute(id:number): Promise<OwnerDTO>{
-            const [ error, owner] = await  catchErrorAsync(this.OwnerRepo.findById(id))
-            if(error) throw error;
-            return new OwnerDTO(owner)
-        }    
+    async execute(id: number): Promise<OwnerDTO> {
+        const [error, owner] = await catchErrorAsync(this.OwnerRepo.findById(id))
+        if (error) throw error;
+        return new OwnerDTO(owner)
+    }
 }
 
-export class CreatePropertyOwnerUseCase implements IPropertyOwnerCase{
-    constructor (private readonly OwnerRepo : IPropertyOwnerRepository){}
+export class CreatePropertyOwnerUseCase implements IPropertyOwnerCase {
+    constructor(private readonly OwnerRepo: IPropertyOwnerRepository) { }
 
     async execute(param: any): Promise<OwnerDTO> {
         console.log("Received param for creation:", param);
 
-     
-        
+
+
         const createData = {
             nrcNo: param.nrcNo,
             address: param.address,
             userId: param.userId
         };
 
-        const [ error, owner ] = await catchErrorAsync(this.OwnerRepo.create(createData));
+        const [error, owner] = await catchErrorAsync(this.OwnerRepo.create(createData));
         if (error) throw error;
         return new OwnerDTO(owner);
+    }
+}
+
+export class ApproveOwnerProfileUseCase implements IPropertyOwnerCase {
+    constructor(private readonly OwnerRepo: IPropertyOwnerRepository) { }
+
+    async execute(id: number): Promise<OwnerDTO> {
+        const [error, owner] = await catchErrorAsync(this.OwnerRepo.approve(id))
+        if (error) throw error
+        return new OwnerDTO(owner)
+    }
+}
+
+export class RejectOwnerProfileUseCase implements IPropertyOwnerCase {
+    constructor(private readonly OwnerRepo: IPropertyOwnerRepository) { }
+
+    async execute(id: number): Promise<OwnerDTO> {
+        const [error, owner] = await catchErrorAsync(this.OwnerRepo.reject(id))
+        if (error) throw error
+        return new OwnerDTO(owner)
+    }
+}
+
+export class DeleteOwnerProfileUseCase implements IPropertyOwnerCase {
+    constructor(private readonly OwnerRepo: IPropertyOwnerRepository) { }
+
+    async execute(id: number): Promise<OwnerDTO> {
+        const [error, owner] = await catchErrorAsync(this.OwnerRepo.deleteById(id))
+        if (error) throw error
+        return new OwnerDTO(owner)
     }
 }
 

@@ -14,17 +14,17 @@ export class PropertyOwnerRepository implements IPropertyOwnerRepository {
             return {
                 user: {
                     is: {
-                      username: {
-                        contains: searchKeyword,
-                      }
+                        username: {
+                            contains: searchKeyword,
+                        }
                     }
-                  }
+                }
             };
-        } 
+        }
         else if (searchBy === "address") {
             return {
                 address: {
-                    contains: searchKeyword,  
+                    contains: searchKeyword,
                 },
             };
         }
@@ -46,7 +46,7 @@ export class PropertyOwnerRepository implements IPropertyOwnerRepository {
                     skip: page * limit,
                     take: limit,
                     orderBy: {},
-                    include:{
+                    include: {
                         user: true
                     }
                 }),
@@ -67,6 +67,7 @@ export class PropertyOwnerRepository implements IPropertyOwnerRepository {
                 userId: owner.userId,
                 username: owner.user?.username,
                 email: owner.user?.email,
+                status: owner.status
             }));
             return {
                 owners,
@@ -82,18 +83,19 @@ export class PropertyOwnerRepository implements IPropertyOwnerRepository {
 
     async findById(id: number): Promise<OwnerDTO> {
         try {
-            const propertyOwner = await prisma.ownerProfile.findUnique({where: {id}, include:{user:true}})
-            
+            const propertyOwner = await prisma.ownerProfile.findUnique({ where: { id }, include: { user: true } })
+
             if (!propertyOwner) {
                 throw AppError.new('badRequest', "Owner not found")
             }
             return new OwnerDTO({
-                'id': propertyOwner.id, 
+                'id': propertyOwner.id,
                 'nrcNo': propertyOwner.nrcNo,
                 'address': propertyOwner.address,
                 'userId': propertyOwner.userId,
                 'username': propertyOwner.user?.username,
                 'email': propertyOwner.user?.email,
+                'status': propertyOwner.status
             })
         } catch (error) {
             console.log(error);
@@ -103,18 +105,27 @@ export class PropertyOwnerRepository implements IPropertyOwnerRepository {
 
     async create(data: PropertyOwnerParams): Promise<PropertyOwner> {
         try {
+
+
+
+            await prisma.ownerProfile.deleteMany({
+                where: { userId: data.userId, status: "Rejected" }
+            });
+
+
             const propertyOwner = await prisma.ownerProfile.create({
-                data:{
+                data: {
                     nrcNo: data.nrcNo,
                     address: data.address,
                     userId: data.userId
                 }
             })
             const newOwner = new PropertyOwner({
-                'id': propertyOwner.id, 
+                'id': propertyOwner.id,
                 'nrcNo': propertyOwner.nrcNo,
                 'address': propertyOwner.address,
-                'userId': propertyOwner.userId
+                'userId': propertyOwner.userId,
+                'status': propertyOwner.status
             })
             return newOwner
         } catch (error) {
@@ -122,5 +133,40 @@ export class PropertyOwnerRepository implements IPropertyOwnerRepository {
             throw AppError.new('internalErrorServer', "prisma error: while creating property owner profile")
         }
     }
+
+    async approve(id: number): Promise<OwnerDTO> {
+        try {
+            const updateOwner = await prisma.ownerProfile.update({
+                where: { id },
+                data: { status: "Approved" }
+            })
+            return new OwnerDTO(updateOwner)
+        } catch (error) {
+            console.log(error);
+            throw AppError.new('internalErrorServer', "prisma error:while getting property owner by id")
+        }
+    }
+
+    async reject(id: number): Promise<OwnerDTO> {
+        try {
+            const updateOwner = await prisma.ownerProfile.update({
+                where: { id },
+                data: { status: "Rejected" }
+            })
+            return new OwnerDTO(updateOwner)
+        } catch (error) {
+            console.log(error);
+            throw AppError.new('internalErrorServer', "prisma error:while getting property owner by id")
+        }
+    }
+
+    async deleteById(id: number): Promise<OwnerDTO> {
+        try {
+            const deleted = await prisma.ownerProfile.delete({ where: { id } })
+            return new OwnerDTO(deleted)
+        } catch (error) {
+            console.log(error);
+            throw AppError.new('internalErrorServer', "prisma error:while deleting property owner by id")
+        }
+    }
 }
-   
