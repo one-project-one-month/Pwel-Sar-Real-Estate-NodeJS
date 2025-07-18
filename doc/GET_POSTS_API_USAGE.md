@@ -150,7 +150,3 @@ GET /posts/123
 
 ---
 
-## Notes
-
-- The detail endpoint returns all available information for the post, including related property and user data.
-- If you need more related data (e.g., images), contact the backend team to extend the response.
