@@ -1,12 +1,12 @@
 import { User } from '../../../../entities/index';
 
 export class AuthUserDTO {
-  id: number;
-  username: string;
-  email: string;
-  roleId: number;
   createdAt: Date;
+  email: string;
+  id: number;
+  roleId: number;
   updatedAt: Date;
+  username: string;
 
   constructor(user: User) {
     this.id = user.id;

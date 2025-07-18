@@ -1,5 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import cloudImageQueue from 'jobs/queqe/cloudImageQueue';
+import { PostDetailDTO } from 'modules/post/application/dtos/PostDetailDTO';
+import { PostFilterDTO } from 'modules/post/application/dtos/PostFilterDTO';
+import { GetPostDetailUseCase } from 'modules/post/application/usecase/GetPostDetailUseCase';
+import { GetPostsUseCase } from 'modules/post/application/usecase/GetPostsUseCase';
 import RegisterPostUseCase from 'modules/post/application/usecase/RegisterPostUseCase';
 import UpdatePostStatusUseCase from 'modules/post/application/usecase/UpdatePostStatusUseCase';
 import { PostRepository } from 'modules/post/infrastructures/repositories/PostRepository';
@@ -9,8 +13,54 @@ const registerPostUseCase = new RegisterPostUseCase(new PostRepository());
 const updatePostStatusUseCase = new UpdatePostStatusUseCase(
   new PostRepository()
 );
+const getPostsUseCase = new GetPostsUseCase(new PostRepository());
+const getPostDetailUseCase = new GetPostDetailUseCase(new PostRepository());
 
 class PostsController {
+  getAll = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('reached controller');
+    try {
+      // Use the validated query from the middleware for all filters
+      const filters = new PostFilterDTO((req as any).validatedQuery);
+      console.log('filters:', filters);
+      const posts = await getPostsUseCase.execute(filters);
+      res.status(200).json(posts);
+    } catch (error) {
+      console.error(error);
+      error instanceof AppError
+        ? next(error)
+        : next(
+            AppError.new(
+              errorKinds.internalServerError,
+              'postController : internal Server Error'
+            )
+          );
+    }
+  };
+
+  getDetail = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = (req as any).validatedParams ?? req.params;
+      const dto = new PostDetailDTO({ id: Number(id) });
+      const post = await getPostDetailUseCase.execute(dto);
+      if (!post) {
+        res.status(404).json({ message: 'Post not found' });
+        return
+      }
+      res.status(200).json(post);
+    } catch (error) {
+      console.error(error);
+      error instanceof AppError
+        ? next(error)
+        : next(
+            AppError.new(
+              errorKinds.internalServerError,
+              'postController : internal Server Error'
+            )
+          );
+    }
+  };
+
   // New: Upload multiple posts for a user using the usecase method
   registerMultiplePostsAsync = async (
     req: Request,

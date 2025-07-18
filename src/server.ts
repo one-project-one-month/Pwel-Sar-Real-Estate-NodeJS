@@ -15,6 +15,10 @@ import multer from 'multer';
 import passport from 'passport';
 import router from 'routes';
 
+(BigInt.prototype as any).toJSON = function () {
+  return Number(this);
+};
+
 const app = express();
 const port = AppConfig.getConfig('PORT');
 

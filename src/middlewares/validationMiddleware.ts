@@ -5,7 +5,7 @@ import { AppError, errorKinds } from '../utils/error-handling';
 
 interface ValidateProps {
   schema: z.Schema;
-  target: 'BODY' | 'QUERY';
+  target: 'BODY' | 'PARAMS' | 'QUERY';
 }
 
 class ValidationMiddleware {
@@ -13,6 +13,13 @@ class ValidationMiddleware {
     return this.validate({
       schema,
       target: 'BODY',
+    });
+  }
+
+  validateRequestParams(schema: z.Schema) {
+    return this.validate({
+      schema,
+      target: 'PARAMS',
     });
   }
 
@@ -26,10 +33,12 @@ class ValidationMiddleware {
   private validate(props: ValidateProps) {
     return (req: Request, res: Response, next: NextFunction) => {
       const { schema, target } = props;
-      const validation = schema.safeParse(
-        target === 'BODY' ? req.body ?? {} : req.query ?? {}
-      );
-      console.log(validation?.error?.errors);
+      let data;
+      if (target === 'BODY') data = req.body ?? {};
+      else if (target === 'QUERY') data = req.query ?? {};
+      else if (target === 'PARAMS') data = req.params ?? {};
+
+      const validation = schema.safeParse(data);
       if (!validation.success) {
         next(
           AppError.new(
@@ -43,6 +52,11 @@ class ValidationMiddleware {
           )
         );
       } else {
+        if (target === 'BODY') (req as any).validatedBody = validation.data;
+        else if (target === 'QUERY')
+          (req as any).validatedQuery = validation.data;
+        else if (target === 'PARAMS')
+          (req as any).validatedParams = validation.data;
         next();
       }
     };

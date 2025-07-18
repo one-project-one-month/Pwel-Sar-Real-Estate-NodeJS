@@ -1,3 +1,4 @@
+import { PostFilterDTO } from 'modules/post/application/dtos/PostFilterDTO';
 import { Property } from 'modules/property/domain/entities/Property.entity';
 
 import { Post, PostStatus, PostType } from '../entities/Post.entity';
@@ -21,6 +22,7 @@ export interface CreatePostAndPropertyRequestType {
     length: number;
     longitude: string;
     ownerId: number;
+    price: number;
     propertyTypeId: number;
     region: string;
     street: string;
@@ -31,9 +33,13 @@ export interface CreatePostAndPropertyRequestType {
 
 export interface IPostRepository {
   createPostAndProperty(
-    params: CreatePostAndPropertyRequestType
+    // eslint-disable-next-line no-unused-vars
+    _params: CreatePostAndPropertyRequestType
   ): Promise<{ post: Post; property: Property }>;
-  updatePostStatus(params: updatePostStatusRequestType): Promise<Post>;
+  // eslint-disable-next-line no-unused-vars
+  findAllWithFilters(_filters: PostFilterDTO): Promise<Post[]>;
+  // eslint-disable-next-line no-unused-vars
+  updatePostStatus(_params: updatePostStatusRequestType): Promise<Post>;
 }
 
 export interface postRegisterReturnType {

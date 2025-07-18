@@ -10,6 +10,7 @@ export interface IProperty {
   longitude: string;
   ownerId: number;
   postId: number; // 1-to-1 relation to Post
+  price: number;
   propertyTypeId: number;
   region: string;
   street: string;
@@ -29,6 +30,7 @@ export class Property {
   longitude: string;
   ownerId: number;
   postId: number; // 1-to-1 relation to Post
+  price: number;
   propertyTypeId: number;
   region: string;
   street: string;
@@ -47,6 +49,7 @@ export class Property {
     this.longitude = Property.longitude;
     this.ownerId = Property.ownerId;
     this.postId = Property.postId;
+    this.price = Property.price
     this.propertyTypeId = Property.propertyTypeId;
     this.region = Property.region;
     this.street = Property.street;

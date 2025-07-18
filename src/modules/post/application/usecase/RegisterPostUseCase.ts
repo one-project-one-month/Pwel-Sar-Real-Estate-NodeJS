@@ -8,6 +8,7 @@ import { PostDTO } from '../dtos/PostDTO';
 // import { PropertyDTO } from '../dtos/PropertyDTO'; // Uncomment if you have a PropertyDTO
 
 class RegisterPostUseCase {
+  // eslint-disable-next-line no-unused-vars
   constructor(private readonly _postRepository: IPostRepository) {}
 
   async execute(

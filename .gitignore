@@ -5,4 +5,6 @@ node_modules
 
 /generated/prisma
 post_module_fixes_and_postman_example.txt
+docs
+get.txt
 /dist

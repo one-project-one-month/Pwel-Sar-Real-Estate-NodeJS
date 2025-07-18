@@ -1,23 +1,23 @@
-type sublingPage = {
-  page: number;
+interface sublingPage {
   limit: number;
-};
+  page: number;
+}
 
 class Pagination<T extends object[]> {
-  public page: number = 1;
-  public totalPage: number = 1;
-  public limit: number = 10;
-  public totalCount: number = 1;
-  public startIdx;
+  public count = 0;
   public endIdx;
-  public count: number = 0;
+  public limit = 10;
+  public endPage: null | sublingPage = { limit: this.limit, page: 1 };
+  public nextPage: null | sublingPage = null;
+  public page = 1;
+  public paginatedData: [] | T = [];
 
-  public paginatedData: T | [] = [];
- 
-  public nextPage: sublingPage | null = null;
-  public prevPage: sublingPage | null = null;
-  public startPage: sublingPage | null = { page: 1, limit: this.limit };
-  public endPage: sublingPage | null = { page: 1, limit: this.limit };
+  public prevPage: null | sublingPage = null;
+
+  public startIdx;
+  public startPage: null | sublingPage = { limit: this.limit, page: 1 };
+  public totalCount = 1;
+  public totalPage = 1;
 
   constructor(page: number, limit: number, totalCount: number, data: T) {
     this.page = !page || page < 1 ? this.page : page;
@@ -39,18 +39,18 @@ class Pagination<T extends object[]> {
       this.page === this.totalPage ? this.totalCount : this.page * this.limit;
 
     this.prevPage =
-      this.page - 1 <= 0 ? null : { page: this.page - 1, limit: this.limit };
+      this.page - 1 <= 0 ? null : { limit: this.limit, page: this.page - 1 };
     this.nextPage =
       this.page >= this.totalPage
         ? null
-        : { page: this.page + 1, limit: this.limit };
+        : { limit: this.limit, page: this.page + 1 };
     this.endPage = {
-      page: this.totalPage,
       limit: this.limit,
+      page: this.totalPage,
     };
     this.startPage = {
-      page: 0,
       limit: this.limit,
+      page: 0,
     };
   }
 

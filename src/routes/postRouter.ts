@@ -4,11 +4,13 @@ import validationMiddleware from 'middlewares/validationMiddleware';
 import postController from 'modules/post/api/controllers/PostsController';
 import { multerErrorHandler } from 'modules/post/api/middlewares/multerErrorHandler';
 import parseFormDataJsonFields from 'modules/post/api/middlewares/parseFormDataJsonFields';
+import { PostFilterQuerySchema } from 'modules/post/api/middlewares/postFilterValidation';
 import {
   PostRegisterSchema,
   PostsArraySchema,
   PostUpdateSchema,
 } from 'modules/post/api/middlewares/postValidation';
+import { PostDetailParamSchema } from 'modules/post/api/params/PostDetailParamSchema';
 import passport from 'passport';
 
 const postRouter = Router();
@@ -37,6 +39,18 @@ postRouter.patch(
   validationMiddleware.validateRequestBody(PostUpdateSchema),
   passport.authenticate('access-jwt', { session: false }),
   postController.update
+);
+
+postRouter.get(
+  '/lists',
+  validationMiddleware.validateRequestQuery(PostFilterQuerySchema),
+  postController.getAll
+);
+
+postRouter.get(
+  '/:id',
+  validationMiddleware.validateRequestParams(PostDetailParamSchema),
+  postController.getDetail
 );
 
 export default postRouter;

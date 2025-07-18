@@ -110,6 +110,7 @@ model Property {
   length         Int             @map("lenth")
   width          Int
   currency       String
+  price          BigInt
   postId         Int             @unique
   owner          User            @relation("UserProperty", fields: [ownerId], references: [id])
   post           Post            @relation(fields: [postId], references: [id], onDelete: Cascade)

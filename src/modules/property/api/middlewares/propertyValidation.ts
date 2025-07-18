@@ -10,6 +10,7 @@ export const PropertySchema = z.object({
   length: z.number(),
   longitude: z.string(),
   ownerId: z.number(),
+  price: z.number(),
   propertyTypeId: z.number(),
   region: z.string(),
   street: z.string(),
