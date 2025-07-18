@@ -11,7 +11,7 @@ export interface IAuthRepository {
     refreshToken: string;
     userId: number;
     // expiresAt: Date;
-  }): Promise<Token>;
+  }): Promise<void>;
   deleteToken(userId: number): Promise<void>;
   findByEmail(email: string): Promise<null | User>;
   findById(id: number): Promise<null | User>;
