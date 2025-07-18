@@ -87,9 +87,9 @@ model AgentProfile {
 }
 
 model Post {
-    id Int @id @default(autoincrement())
-
-    property Property?
+    id          Int       @id @default(autoincrement())
+    description String
+    property    Property?
 
     type   PostType // 'sale' | 'rent' | 'lease'
     status PostStatus // 'active' | 'pending' | 'denied'
