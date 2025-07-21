@@ -68,11 +68,11 @@ export class AuthController {
 
     const logoutUseCase = new LogoutUseCase(Container.authRepository);
 
-    if (!id) throw AppError.new('invalidToken', 'Invalid RefreshToken');
+    if (!id) throw AppError.new('invalidToken', 'No userId');
 
     await logoutUseCase.execute(id);
 
-    res.status(204).send();
+    res.status(204).json({ message: 'Logout success' });
   }
 
   // eslint-disable-next-line no-unused-vars
