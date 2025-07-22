@@ -30,6 +30,7 @@ export class AuthController {
     });
   }
 
+  // eslint-disable-next-line no-unused-vars
   async getUser(req: Request, res: Response, next: NextFunction) {
     const user = req.user;
 
@@ -67,15 +68,18 @@ export class AuthController {
 
     const logoutUseCase = new LogoutUseCase(Container.authRepository);
 
-    if (!id) throw AppError.new('invalidToken', 'Invalid RefreshToken');
+    if (!id) throw AppError.new('invalidToken', 'No userId');
 
     await logoutUseCase.execute(id);
 
-    res.status(204).send();
+    res.status(204).json({ message: 'Logout success' });
   }
 
+  // eslint-disable-next-line no-unused-vars
   async refreshToken(req: Request, res: Response, next: NextFunction) {
     const { refreshToken } = req.body;
+
+    console.log(refreshToken);
 
     if (!refreshToken)
       throw AppError.new(errorKinds.notFound, 'Token is not found');

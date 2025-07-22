@@ -29,13 +29,30 @@ export class AuthRepository implements IAuthRepository {
   async createRefreshToken(data: {
     refreshToken: string;
     userId: number;
-  }): Promise<Token> {
-    const token = await prisma.refreshToken.create({
-      data: {
-        token: data.refreshToken,
-        userId: data.userId,
-      },
+  }): Promise<void> {
+    // First check if a token already exists for this user
+    const existingToken = await prisma.refreshToken.findFirst({
+      where: { userId: data.userId },
     });
+
+    let token;
+
+    if (existingToken) {
+      // If a token already exists, update it
+      token = await prisma.refreshToken.update({
+        data: { token: data.refreshToken, updatedAt: new Date() },
+        where: { id: existingToken.id },
+      });
+    } else {
+      // If a token doesn't exist, create a new one
+      token = await prisma.refreshToken.create({
+        data: {
+          token: data.refreshToken,
+          updatedAt: new Date(),
+          userId: data.userId,
+        },
+      });
+    }
 
     if (!token)
       throw AppError.new(
@@ -43,8 +60,28 @@ export class AuthRepository implements IAuthRepository {
         'Failed to create refresh token'
       );
 
-    return new Token(token.id, token.token, token.userId);
+    // return new Token(token.id, token.token, token.userId);
   }
+
+  //   async createRefreshToken(data: {
+  //     refreshToken: string;
+  //     userId: number;
+  //   }): Promise<Token> {
+  //     const token = await prisma.refreshToken.create({
+  //       data: {
+  //         token: data.refreshToken,
+  //         userId: data.userId,
+  //       },
+  //     });
+
+  //     if (!token)
+  //       throw AppError.new(
+  //         'internalErrorServer',
+  //         'Failed to create refresh token'
+  //       );
+
+  //     return new Token(token.id, token.token, token.userId);
+  //   }
 
   async deleteToken(userId: number): Promise<void> {
     const token = await prisma.refreshToken.deleteMany({

@@ -18,6 +18,8 @@ export class LoginUseCase {
 
     const { accessToken, refreshToken } = generateTokens(user);
 
+    console.log(accessToken, refreshToken);
+
     await this.authRepository.createRefreshToken({
       refreshToken,
       userId: user.id,
