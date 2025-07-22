@@ -51,11 +51,12 @@ model RefreshToken {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     user      User     @relation("TokenUser", fields: [userId], references: [id])
-
+    
     @@map("refresh_token")
 }
 
 model AgentProfile {
+
     id            Int                @id @default(autoincrement())
     userId        Int                @unique
     cnaNumber     String
@@ -191,6 +192,7 @@ model OwnerProfile {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     user      User     @relation(fields: [userId], references: [id])
+    phone     String
 
     @@map("owner_profile")
 }
