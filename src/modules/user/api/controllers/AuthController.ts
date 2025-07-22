@@ -3,11 +3,10 @@ import { LogoutUseCase } from 'modules/user/applications/usecase/auth/LogoutUseC
 import { RegisterUseCase } from 'modules/user/applications/usecase/auth/RegisterUseCase';
 import { AppError, catchErrorAsync, errorKinds } from 'utils/error-handling';
 
+import { Container } from '../di/Container';
 // import { AuthRepository } from 'modules/user/infrastructures/repositories/AuthRepository';
 import { LoginUseCase } from './../../applications/usecase/auth/LoginUseCase';
 import { RefreshAccessTokenUseCase } from './../../applications/usecase/auth/RefreshAccessTokenUseCase';
-
-import { Container } from '../di/Container';
 export class AuthController {
   async create(req: Request, res: Response, next: NextFunction) {
     const { email, password, username } = req.body;
@@ -31,6 +30,7 @@ export class AuthController {
     });
   }
 
+  // eslint-disable-next-line no-unused-vars
   async getUser(req: Request, res: Response, next: NextFunction) {
     const user = req.user;
 
@@ -68,15 +68,18 @@ export class AuthController {
 
     const logoutUseCase = new LogoutUseCase(Container.authRepository);
 
-    if (!id) throw AppError.new('invalidToken', 'Invalid RefreshToken');
+    if (!id) throw AppError.new('invalidToken', 'No userId');
 
     await logoutUseCase.execute(id);
 
-    res.status(204).send();
+    res.status(204).json({ message: 'Logout success' });
   }
 
+  // eslint-disable-next-line no-unused-vars
   async refreshToken(req: Request, res: Response, next: NextFunction) {
     const { refreshToken } = req.body;
+
+    console.log(refreshToken);
 
     if (!refreshToken)
       throw AppError.new(errorKinds.notFound, 'Token is not found');

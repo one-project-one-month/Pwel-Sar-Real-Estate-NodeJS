@@ -16,6 +16,7 @@ export default passport.use(
     async (jwt_payload, done) => {
       try {
         const user = await authRepository.findById(jwt_payload.id);
+
         if (user) return done(null, user);
         else return done(null, false);
       } catch (err) {
