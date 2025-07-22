@@ -1,3 +1,5 @@
+import { Property } from './Property.entity';
+
 export enum PostStatus {
   // eslint-disable-next-line no-unused-vars
   Pending = 'Pending',
@@ -20,6 +22,7 @@ export interface IPost {
   description: string;
   id: number;
   phone: string;
+  property?: any;
   socialLink?: null | string;
   status: PostStatus;
   type: PostType;
@@ -33,6 +36,7 @@ export class Post {
   description: string;
   id: number;
   phone: string;
+  property?: Property | undefined;
   socialLink?: null | string;
   status: PostStatus;
   type: PostType;
@@ -50,5 +54,6 @@ export class Post {
     this.userId = params.userId;
     this.createdAt = params.createdAt;
     this.updatedAt = params.updatedAt;
+    this.property = params.property;
   }
 }

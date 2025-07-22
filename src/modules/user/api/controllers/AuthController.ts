@@ -79,6 +79,8 @@ export class AuthController {
   async refreshToken(req: Request, res: Response, next: NextFunction) {
     const { refreshToken } = req.body;
 
+    console.log(refreshToken);
+
     if (!refreshToken)
       throw AppError.new(errorKinds.notFound, 'Token is not found');
 

@@ -53,6 +53,34 @@ export class PostRepositories implements IPostRepositories {
     }
   }
 
+  async getAllPosts(): Promise<Post[]> {
+    try {
+      const posts = await prisma.post.findMany({
+        include: {
+          property: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      //   console.log(posts);
+
+      return posts.map((post) => {
+        return new Post({
+          ...post,
+          status: post.status as PostStatus,
+          type: post.type as PostType,
+        });
+      });
+    } catch (error) {
+      throw AppError.new(
+        'internalErrorServer',
+        `Something went wrong: ${error}`
+      );
+    }
+  }
+
   async verifyPost(params: any): Promise<Post> {
     try {
       console.log(params);

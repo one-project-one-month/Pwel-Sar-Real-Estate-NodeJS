@@ -12,6 +12,7 @@ export class CreatePendingPostUseCase {
 
   async execute(params: any): Promise<any> {
     try {
+      console.log(params);
       const post = await this.postRepository.createPending(params.post);
 
       const property = await this.propertyRepository.create({

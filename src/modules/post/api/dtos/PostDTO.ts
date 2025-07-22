@@ -4,6 +4,7 @@ export class PostDTO {
   description: string;
   id: number;
   phone: string;
+  property?: any;
   socialLink?: string;
   status: string;
   type: string;
@@ -21,5 +22,6 @@ export class PostDTO {
     this.socialLink = post.socialLink;
     this.createdAt = post.createdAt;
     this.updatedAt = post.updatedAt;
+    this.property = post.property;
   }
 }

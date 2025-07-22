@@ -22,4 +22,17 @@ export class PropertyRepository {
       );
     }
   }
+
+  async getAllProperties(): Promise<Property[]> {
+    try {
+      const properties = await prisma.property.findMany();
+
+      return properties.map((property) => new Property(property));
+    } catch (error) {
+      throw AppError.new(
+        'internalErrorServer',
+        `Something went wrong: ${error}`
+      );
+    }
+  }
 }

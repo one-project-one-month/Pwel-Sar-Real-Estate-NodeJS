@@ -59,4 +59,14 @@ export class Property {
     this.createdAt = params.createdAt;
     this.updatedAt = params.updatedAt;
   }
+
+  getAddress(): string {
+    return `No. ${this.buildingNumber}, ${
+      this.floor && `${this.floor} Floor`
+    }, ${this.street} Street, ${this.township} Township, ${this.region}`;
+  }
+
+  getArea(): number {
+    return this.width * this.length;
+  }
 }

@@ -6,7 +6,17 @@ const postRouter = Router();
 
 const postController = new PostController();
 
-postRouter.post('/', postController.createPendingPost);
+postRouter.get(
+  '/',
+  passport.authenticate('access-jwt', { session: false }),
+  postController.getAllPosts
+);
+
+postRouter.post(
+  '/create',
+  passport.authenticate('access-jwt', { session: false }),
+  postController.createPendingPost
+);
 
 postRouter.patch(
   '/:id/verify',

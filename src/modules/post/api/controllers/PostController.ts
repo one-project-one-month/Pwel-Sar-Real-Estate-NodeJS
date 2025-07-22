@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { CreatePendingPostUseCase } from 'modules/post/application/usecases/CreatePendingPostUseCase';
+import { GetAllPostsUseCase } from 'modules/post/application/usecases/GetAllPostsUseCase';
 import { VerifyPostUseCase } from 'modules/post/application/usecases/VerifyPostUseCase';
 import { AppError, errorKinds } from 'utils/error-handling';
 
@@ -11,14 +12,34 @@ export class PostController {
     try {
       const { post, property } = req.body;
 
+      const user = req.user as any;
+
       const postUseCase = new CreatePendingPostUseCase(
         Container.postRepository,
         Container.propertyRepository
       );
 
-      const result = await postUseCase.execute({ post, property });
+      const result = await postUseCase.execute({
+        post: { ...post, userId: user.id },
+        property: { ...property, ownerId: user.id },
+      });
 
       res.status(201).json(result);
+    } catch (error) {
+      throw AppError.new(errorKinds.badRequest, `${error}`);
+    }
+  }
+  // eslint-disable-next-line no-unused-vars
+  async getAllPosts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const getAllPostsUseCase = new GetAllPostsUseCase(
+        Container.postRepository
+        // Container.propertyRepository
+      );
+
+      const result = await getAllPostsUseCase.execute();
+
+      res.status(200).json(result);
     } catch (error) {
       throw AppError.new(errorKinds.badRequest, `${error}`);
     }
