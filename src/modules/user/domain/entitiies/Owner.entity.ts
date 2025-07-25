@@ -1,28 +1,29 @@
-
-
-export type PropertyOwnerParams = {
-  
-    id?: number;
-    nrcNo: string;
-    address: string;
-    userId: number;
+export interface OwnerParams {
+  address: string;
+  createdAt: Date;
+  id: number;
+  nrcNo: string;
+  phone: string;
+  updatedAt: Date;
+  userId: number;
 }
 
-export class PropertyOwner {
-    id?: number;
-    nrcNo: string;
-    address: string;
-    userId: number;
+export class Owner {
+  address: string;
+  createdAt: Date;
+  id: number;
+  nrcNo: string;
+  phone: string;
+  updatedAt: Date;
+  userId: number;
 
-    constructor(params: PropertyOwnerParams){
-        const {id, nrcNo,  address, userId} = params
-        this.id = id
-        this.nrcNo = nrcNo
-        this.address = address
-        this.userId = userId
-
-        if(!nrcNo || !address ){
-            throw new Error("All fields are required")
-        }
-    }
+  constructor(params: OwnerParams) {
+    this.id = params.id;
+    this.nrcNo = params.nrcNo;
+    this.address = params.address;
+    this.userId = params.userId;
+    this.createdAt = params.createdAt;
+    this.updatedAt = params.updatedAt;
+    this.phone = params.phone;
+  }
 }

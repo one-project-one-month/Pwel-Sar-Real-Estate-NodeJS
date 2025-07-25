@@ -1,32 +1,24 @@
 import { prisma } from 'libs/prismaClients';
-import { OwnerDTO } from 'modules/user/applications/dtos/OwnerDTO';
-import {
-  PropertyOwner,
-  PropertyOwnerParams,
-} from 'modules/user/domain/entitiies/Owner.entity';
+import { Owner } from 'modules/user/domain/entitiies/Owner.entity';
 import {
   GetAllOwnerRequestType,
   GetOwnerListReturnType,
-  IPropertyOwnerRepository,
+  IOwnerRepository,
 } from 'modules/user/domain/repositories/IOwnerRepository';
 import { AppError, catchErrorAsync } from 'utils/error-handling';
 
-export class PropertyOwnerRepository implements IPropertyOwnerRepository {
-  async create(data: PropertyOwnerParams): Promise<PropertyOwner> {
+export class PropertyOwnerRepository implements IOwnerRepository {
+  async create(data: any): Promise<Owner> {
     try {
       const propertyOwner = await prisma.ownerProfile.create({
         data: {
           address: data.address,
           nrcNo: data.nrcNo,
+          phone: data.phone,
           userId: data.userId,
         },
       });
-      const newOwner = new PropertyOwner({
-        address: propertyOwner.address,
-        id: propertyOwner.id,
-        nrcNo: propertyOwner.nrcNo,
-        userId: propertyOwner.userId,
-      });
+      const newOwner = new Owner(propertyOwner);
       return newOwner;
     } catch (error) {
       console.log(error);
@@ -37,7 +29,7 @@ export class PropertyOwnerRepository implements IPropertyOwnerRepository {
     }
   }
 
-  async findById(id: number): Promise<OwnerDTO> {
+  async findById(id: number): Promise<Owner> {
     try {
       const propertyOwner = await prisma.ownerProfile.findUnique({
         include: { user: true },
@@ -47,14 +39,7 @@ export class PropertyOwnerRepository implements IPropertyOwnerRepository {
       if (!propertyOwner) {
         throw AppError.new('badRequest', 'Owner not found');
       }
-      return new OwnerDTO({
-        address: propertyOwner.address,
-        email: propertyOwner.user?.email,
-        id: propertyOwner.id,
-        nrcNo: propertyOwner.nrcNo,
-        userId: propertyOwner.userId,
-        username: propertyOwner.user?.username,
-      });
+      return new Owner(propertyOwner);
     } catch (error) {
       console.log(error);
       throw AppError.new(
@@ -97,17 +82,7 @@ export class PropertyOwnerRepository implements IPropertyOwnerRepository {
 
       const [rawOwners, ownersCount] = result;
 
-      const owners = rawOwners.map(
-        (owner) =>
-          new OwnerDTO({
-            address: owner.address,
-            email: owner.user?.email,
-            id: owner.id,
-            nrcNo: owner.nrcNo,
-            userId: owner.userId,
-            username: owner.user?.username,
-          })
-      );
+      const owners = rawOwners.map((owner) => new Owner(owner));
       return {
         owners,
         totalCount: ownersCount,

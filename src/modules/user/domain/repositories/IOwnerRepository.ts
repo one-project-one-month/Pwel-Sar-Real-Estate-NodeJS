@@ -1,19 +1,22 @@
-import { PropertyOwner, PropertyOwnerParams } from "../entitiies/Owner.entity"
+import { Owner } from '../entitiies/Owner.entity';
 
-export type GetAllOwnerRequestType = {
-    page: number,
-    limit?: number,
-    searchBy?: string,
-    searchKeyword: string
+export interface GetAllOwnerRequestType {
+  limit?: number;
+  page: number;
+  searchBy?: string;
+  searchKeyword: string;
 }
 
-export type GetOwnerListReturnType = {
-    owners: PropertyOwner[],
-    totalCount : number
+export interface GetOwnerListReturnType {
+  owners: Owner[];
+  totalCount: number;
 }
 
-export interface IPropertyOwnerRepository{
-    getAll:(params:GetAllOwnerRequestType)=>Promise<GetOwnerListReturnType>
-    findById:(id:number)=>Promise<PropertyOwner>
-    create:(data: PropertyOwnerParams)=>Promise<PropertyOwner>
+export interface IOwnerRepository {
+  // eslint-disable-next-line no-unused-vars
+  create: (data: any) => Promise<Owner>;
+  // eslint-disable-next-line no-unused-vars
+  findById: (id: number) => Promise<Owner>;
+  // eslint-disable-next-line no-unused-vars
+  getAll: (params: GetAllOwnerRequestType) => Promise<GetOwnerListReturnType>;
 }
