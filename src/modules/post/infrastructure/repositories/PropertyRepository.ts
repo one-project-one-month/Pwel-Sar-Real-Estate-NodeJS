@@ -23,6 +23,18 @@ export class PropertyRepository {
     }
   }
 
+  async delete(id: number): Promise<void> {
+    try {
+      console.log(id);
+      await prisma.property.delete({ where: { id: id } });
+    } catch (error) {
+      throw AppError.new(
+        'internalErrorServer',
+        `Something went wrong while deleting property: ${error}`
+      );
+    }
+  }
+
   async getAllProperties(): Promise<Property[]> {
     try {
       const properties = await prisma.property.findMany();

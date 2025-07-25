@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { CreatePendingPostUseCase } from 'modules/post/application/usecases/CreatePendingPostUseCase';
+import { DeletePostUseCase } from 'modules/post/application/usecases/DeletePostUseCase';
 import { GetAllPostsUseCase } from 'modules/post/application/usecases/GetAllPostsUseCase';
+import { GetPostDetailUseCase } from 'modules/post/application/usecases/GetPostDetailUseCase';
 import { VerifyPostUseCase } from 'modules/post/application/usecases/VerifyPostUseCase';
 import { AppError, errorKinds } from 'utils/error-handling';
 
@@ -29,6 +31,27 @@ export class PostController {
       throw AppError.new(errorKinds.badRequest, `${error}`);
     }
   }
+
+  // eslint-disable-next-line no-unused-vars
+  async deletePost(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+
+      console.log(id);
+
+      const deletePostUseCase = new DeletePostUseCase(
+        Container.postRepository
+        // Container.propertyRepository
+      );
+
+      const result = await deletePostUseCase.execute(id);
+
+      res.status(201).json(result);
+    } catch (error) {
+      throw AppError.new(errorKinds.badRequest, `${error}`);
+    }
+  }
+
   // eslint-disable-next-line no-unused-vars
   async getAllPosts(req: Request, res: Response, next: NextFunction) {
     try {
@@ -39,6 +62,21 @@ export class PostController {
 
       const result = await getAllPostsUseCase.execute();
 
+      res.status(200).json(result);
+    } catch (error) {
+      throw AppError.new(errorKinds.badRequest, `${error}`);
+    }
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  async getPostDetail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = Number(req.params.id);
+
+      const getPostDetailUseCase = new GetPostDetailUseCase(
+        Container.postRepository
+      );
+      const result = await getPostDetailUseCase.execute(id);
       res.status(200).json(result);
     } catch (error) {
       throw AppError.new(errorKinds.badRequest, `${error}`);

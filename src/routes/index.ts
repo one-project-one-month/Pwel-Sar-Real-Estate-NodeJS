@@ -5,6 +5,7 @@ import { AppError, errorKinds } from 'utils/error-handling';
 
 import agentRouter from './agentRouter';
 import authRouter from './authRouter';
+import ownerRouter from './ownerRouter';
 import postRouter from './postRouter';
 import userRouter from './userRouter';
 
@@ -18,6 +19,8 @@ router.get(
 );
 
 //register route
+
+router.use('/owners', ownerRouter);
 router.use('/users', userRouter);
 router.use('/auth', authRouter);
 router.use('/agent-profiles', agentRouter);

@@ -18,7 +18,7 @@ export class AuthController {
       registerUseCase.execute({ email, password, username })
     );
 
-    console.log(result);
+    // console.log(result);
 
     if (error) {
       next(error);

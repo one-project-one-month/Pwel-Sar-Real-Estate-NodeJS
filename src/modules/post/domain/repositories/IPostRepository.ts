@@ -5,6 +5,9 @@ export interface IPostRepositories {
   createPending(data: IPost): Promise<Post>;
 
   // eslint-disable-next-line no-unused-vars
+  deletePost(id: number): Promise<any>;
+
+  // eslint-disable-next-line no-unused-vars
   findPostById(id: number): Promise<Post>;
 
   getAllPosts(): Promise<Post[]>;
