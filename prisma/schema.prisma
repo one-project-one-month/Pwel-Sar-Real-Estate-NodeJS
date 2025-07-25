@@ -51,12 +51,11 @@ model RefreshToken {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     user      User     @relation("TokenUser", fields: [userId], references: [id])
-    
+
     @@map("refresh_token")
 }
 
 model AgentProfile {
-
     id            Int                @id @default(autoincrement())
     userId        Int                @unique
     cnaNumber     String
@@ -137,8 +136,8 @@ model Property {
     postId         Int
     updatedAt      DateTime        @updatedAt
     owner          User            @relation("UserProperty", fields: [ownerId], references: [id])
-    post           Post            @relation(fields: [postId], references: [id])
-    propertyType   PropertyType    @relation(fields: [propertyTypeId], references: [id])
+    post           Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+    propertyType   PropertyType    @relation(fields: [propertyTypeId], references: [id], onDelete: Cascade)
     photos         PropertyPhoto[]
 
     @@map("property")
@@ -159,7 +158,7 @@ model PropertyPhoto {
     id         Int      @id @default(autoincrement())
     path       String
     propertyId Int
-    property   Property @relation(fields: [propertyId], references: [id])
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
     @@map("property_photo")
 }

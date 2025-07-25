@@ -24,4 +24,16 @@ postRouter.patch(
   postController.verifyPost
 );
 
+postRouter.get(
+  '/:id',
+  //   passport.authenticate('access-jwt', { session: false }),
+  postController.getPostDetail
+);
+
+postRouter.delete(
+  '/:id',
+  passport.authenticate('access-jwt', { session: false }),
+  postController.deletePost
+);
+
 export default postRouter;

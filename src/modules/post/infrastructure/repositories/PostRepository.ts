@@ -28,9 +28,29 @@ export class PostRepositories implements IPostRepositories {
     }
   }
 
+  async deletePost(id: number): Promise<any> {
+    try {
+      const post = await prisma.post.delete({
+        where: { id },
+      });
+
+      console.log(post);
+
+      return post;
+    } catch (error) {
+      throw AppError.new(
+        'internalErrorServer',
+        `Something went wrong while deleting post: ${error}`
+      );
+    }
+  }
+
   async findPostById(id: number): Promise<Post> {
     try {
       const post = await prisma.post.findUnique({
+        include: {
+          property: true,
+        },
         where: {
           id,
         },
