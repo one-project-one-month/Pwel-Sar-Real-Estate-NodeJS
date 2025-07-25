@@ -20,7 +20,7 @@ router.get(
 
 //register route
 
-router.use('/owner', ownerRouter);
+router.use('/owners', ownerRouter);
 router.use('/users', userRouter);
 router.use('/auth', authRouter);
 router.use('/agent-profiles', agentRouter);

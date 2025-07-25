@@ -2,12 +2,12 @@ export class OwnerDTO {
   address: string;
   id: number;
   nrcNo: string;
-  userId: number;
+  user: any;
 
   constructor(owner: any) {
     this.id = owner.id;
     this.nrcNo = owner.nrcNo;
     this.address = owner.address;
-    this.userId = owner.userId;
+    this.user = owner.user;
   }
 }

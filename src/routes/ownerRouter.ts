@@ -4,8 +4,16 @@ import passport from 'passport';
 
 const ownerRoute = Router();
 
-// ownerRoute.get('/', ownerController.getAll);
-// ownerRoute.get('/:id', ownerController.findById);
+ownerRoute.get(
+  '/',
+  passport.authenticate('access-jwt', { session: false }),
+  ownerController.getAll
+);
+ownerRoute.get(
+  '/:id',
+  passport.authenticate('access-jwt', { session: false }),
+  ownerController.findById
+);
 ownerRoute.post(
   '/create',
   passport.authenticate('access-jwt', { session: false }),

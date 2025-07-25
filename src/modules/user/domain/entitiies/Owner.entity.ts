@@ -5,6 +5,7 @@ export interface OwnerParams {
   nrcNo: string;
   phone: string;
   updatedAt: Date;
+  user?: any;
   userId: number;
 }
 
@@ -15,6 +16,7 @@ export class Owner {
   nrcNo: string;
   phone: string;
   updatedAt: Date;
+  user?: any;
   userId: number;
 
   constructor(params: OwnerParams) {
@@ -25,5 +27,6 @@ export class Owner {
     this.createdAt = params.createdAt;
     this.updatedAt = params.updatedAt;
     this.phone = params.phone;
+    this.user = params.user;
   }
 }

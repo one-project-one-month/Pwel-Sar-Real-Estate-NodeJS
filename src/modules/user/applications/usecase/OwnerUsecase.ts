@@ -1,11 +1,11 @@
 import { prisma } from 'libs/prismaClients';
-// import { GetOwnerListParamType } from 'modules/user/api/params/getOwnerListParam';
+import { GetOwnerListParamType } from 'modules/user/api/params/getOwnerListParam';
 import {
-  //   GetAllOwnerRequestType,
+  GetAllOwnerRequestType,
   IOwnerRepository,
 } from 'modules/user/domain/repositories/IOwnerRepository';
 import { catchErrorAsync } from 'utils/error-handling/CatchError';
-// import Pagination from 'utils/pagination/Pagination';
+import Pagination from 'utils/pagination/Pagination';
 
 import { OwnerDTO } from '../dtos/OwnerDTO';
 
@@ -44,46 +44,49 @@ export class CreatePropertyOwnerUseCase implements IPropertyOwnerCase {
   }
 }
 
-// export class GetOwnerListUseCase {
-//   // eslint-disable-next-line no-unused-vars
-//   constructor(private readonly OwnerRepo: IOwnerRepository) {}
-//   async execute(
-//     params: GetOwnerListParamType
-//   ): Promise<Pagination<OwnerDTO[]>> {
-//     const pageNum = params.page || 0;
-//     const limitNum = params.limit || 20;
+export class GetOwnerListUseCase {
+  // eslint-disable-next-line no-unused-vars
+  constructor(private readonly OwnerRepo: IOwnerRepository) {}
+  async execute(
+    params: GetOwnerListParamType
+  ): Promise<Pagination<OwnerDTO[]>> {
+    const pageNum = params.page ?? 0;
+    const limitNum = params.limit ?? 20;
 
-//     const [error, results] = await catchErrorAsync(
-//       this.OwnerRepo.getAll({
-//         limit: limitNum,
-//         page: pageNum,
-//         searchBy: params.searchBy as GetAllOwnerRequestType['searchBy'],
-//         searchKeyword: params.search ?? '',
-//       })
-//     );
+    const [error, results] = await catchErrorAsync(
+      this.OwnerRepo.getAll({
+        limit: limitNum,
+        page: pageNum,
+        searchBy: params.searchBy as GetAllOwnerRequestType['searchBy'],
+        searchKeyword: params.search ?? '',
+      })
+    );
 
-//     if (error) {
-//       throw error;
-//     }
+    if (error) {
+      throw error;
+    }
 
-//     const ownerLists = results.owners.map((user) => new OwnerDTO(user));
-//     const paginationResult = Pagination.new(
-//       pageNum,
-//       limitNum,
-//       results.totalCount,
-//       ownerLists
-//     ).getResult();
-//     return paginationResult;
-//   }
-// }
+    const ownerLists = results.owners.map((user) => new OwnerDTO(user));
+    const paginationResult = Pagination.new(
+      pageNum,
+      limitNum,
+      results.totalCount,
+      ownerLists
+    ).getResult();
+    return paginationResult;
+  }
+}
 
-// export class GetPropertyOwnerByIdUseCase implements IPropertyOwnerCase {
-//   // eslint-disable-next-line no-unused-vars
-//   constructor(private readonly OwnerRepo: IOwnerRepository) {}
+export class GetPropertyOwnerByIdUseCase implements IPropertyOwnerCase {
+  // eslint-disable-next-line no-unused-vars
+  constructor(private readonly OwnerRepo: IOwnerRepository) {}
 
-//   async execute(id: number): Promise<OwnerDTO> {
-//     const [owner, error] = await catchErrorAsync(this.OwnerRepo.findById(id));
-//     if (error) throw error;
-//     return new OwnerDTO(owner);
-//   }
-// }
+  async execute(id: number): Promise<OwnerDTO> {
+    const [error, owner] = await catchErrorAsync(this.OwnerRepo.findById(id));
+
+    console.log('Owner found:', owner);
+
+    if (error) throw error;
+    return new OwnerDTO(owner);
+  }
+}

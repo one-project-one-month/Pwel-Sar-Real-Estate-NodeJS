@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 import {
   CreatePropertyOwnerUseCase,
-  //   GetOwnerListUseCase,
-  //   GetPropertyOwnerByIdUseCase,
+  GetOwnerListUseCase,
+  GetPropertyOwnerByIdUseCase,
 } from 'modules/user/applications/usecase/OwnerUsecase';
 import { PropertyOwnerRepository } from 'modules/user/infrastructures/repositories/OwnerRepository';
 import { AppError, errorKinds } from 'utils/error-handling/AppError';
-// import { catchErrorAsync } from 'utils/error-handling/CatchError';
+import { catchErrorAsync } from 'utils/error-handling/CatchError';
 
-// import { GetOwnerListParamType } from '../params/getOwnerListParam';
+import { GetOwnerListParamType } from '../params/getOwnerListParam';
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -18,12 +18,14 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-// const getPropertyOwnerList = new GetOwnerListUseCase(
-//   new PropertyOwnerRepository()
-// );
-// const getPropertyOwnerByIdUseCase = new GetPropertyOwnerByIdUseCase(
-//   new PropertyOwnerRepository()
-// );
+const getPropertyOwnerList = new GetOwnerListUseCase(
+  new PropertyOwnerRepository()
+);
+
+const getPropertyOwnerByIdUseCase = new GetPropertyOwnerByIdUseCase(
+  new PropertyOwnerRepository()
+);
+
 const createPropertyOwnerUseCase = new CreatePropertyOwnerUseCase(
   new PropertyOwnerRepository()
 );
@@ -69,42 +71,46 @@ class OwnerController {
       );
     }
   }
-  //   async findById(req: Request, res: Response, next: NextFunction) {
-  //     const [owner, error] = await catchErrorAsync(
-  //       getPropertyOwnerByIdUseCase.execute(Number(req.params.id))
-  //     );
-  //     if (error) return next(error);
-  //     res.status(200).json(owner);
-  //   }
+  async findById(req: Request, res: Response, next: NextFunction) {
+    const [error, owner] = await catchErrorAsync(
+      getPropertyOwnerByIdUseCase.execute(Number(req.params.id))
+    );
 
-  //   async getAll(req: Request, res: Response, next: NextFunction) {
-  //     // const [owners, error] = await catchErrorAsync(getPropertyOwnerList.execute({}))
-  //     // if (error) return next(error);
-  //     // res.status(200).json(owners);
+    console.log(owner);
 
-  //     try {
-  //       const { limit, page, search, searchBy } = req.query;
-  //       const pageNum = parseInt(page as string, 10) || undefined;
-  //       const limitNum = parseInt(limit as string, 10) || undefined;
-  //       const result = await getPropertyOwnerList.execute({
-  //         limit: limitNum,
-  //         page: pageNum,
-  //         search: search as string | undefined,
-  //         searchBy: searchBy as GetOwnerListParamType['searchBy'],
-  //       });
-  //       res.status(200).json(result);
-  //     } catch (error) {
-  //       console.error('Error in getAll:', error);
-  //       error instanceof AppError
-  //         ? next(error)
-  //         : next(
-  //             AppError.new(
-  //               errorKinds.internalServerError,
-  //               'userController : internal Server Error'
-  //             )
-  //           );
-  //     }
-  //   }
+    if (error) return next(error);
+
+    res.status(200).json(owner);
+  }
+
+  async getAll(req: Request, res: Response, next: NextFunction) {
+    // const [owners, error] = await catchErrorAsync(getPropertyOwnerList.execute({}))
+    // if (error) return next(error);
+    // res.status(200).json(owners);
+
+    try {
+      const { limit, page, search, searchBy } = req.query;
+      const pageNum = parseInt(page as string, 10) || undefined;
+      const limitNum = parseInt(limit as string, 10) || undefined;
+      const result = await getPropertyOwnerList.execute({
+        limit: limitNum,
+        page: pageNum,
+        search: search as string | undefined,
+        searchBy: searchBy as GetOwnerListParamType['searchBy'],
+      });
+      res.status(200).json(result);
+    } catch (error) {
+      console.error('Error in getAll:', error);
+      error instanceof AppError
+        ? next(error)
+        : next(
+            AppError.new(
+              errorKinds.internalServerError,
+              'userController : internal Server Error'
+            )
+          );
+    }
+  }
 }
 
 const ownerController = new OwnerController();
