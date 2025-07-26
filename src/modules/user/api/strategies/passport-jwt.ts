@@ -3,6 +3,8 @@ import passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { ACCESS_TOKEN_PUBLIC_KEY } from 'utils/auth/jwt';
 
+import { AuthUserDTO } from '../dtos/AuthUserDTO';
+
 const authRepository = new AuthRepository();
 
 export default passport.use(
@@ -17,7 +19,13 @@ export default passport.use(
       try {
         const user = await authRepository.findById(jwt_payload.id);
 
-        if (user) return done(null, user);
+        if (!user) {
+          return done(null, false, { message: 'User not found' });
+        }
+
+        const authUser = new AuthUserDTO(user);
+
+        if (user) return done(null, authUser);
         else return done(null, false);
       } catch (err) {
         return done(err, false);
