@@ -3,19 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppError = exports.isErrorKinds = exports.errorKinds = void 0;
 const Status_1 = require("../../config/Status");
 exports.errorKinds = {
-    invalidToken: "invalidToken",
-    internalServerError: "internalErrorServer",
-    validationFailed: "validationFailed",
-    invalidCredential: "invalidCredential",
-    notFound: "notFound",
-    notAuthorized: "notAuthorized",
-    alreadyExist: "alreadyExist",
-    forbidden: "forbidden",
-    accessDenied: "accessDenied",
-    unVerifyAccount: "unVerifyAccount",
-    badRequest: "badRequest",
-    oauthAccountAlreadyExist: "oauthAccountAlreadyExist",
-    mailboxUnavailable: "mailboxUnavailable",
+    accessDenied: 'accessDenied',
+    alreadyExist: 'alreadyExist',
+    badRequest: 'badRequest',
+    forbidden: 'forbidden',
+    internalServerError: 'internalErrorServer',
+    invalidCredential: 'invalidCredential',
+    invalidToken: 'invalidToken',
+    mailboxUnavailable: 'mailboxUnavailable',
+    notAuthorized: 'notAuthorized',
+    notFound: 'notFound',
+    oauthAccountAlreadyExist: 'oauthAccountAlreadyExist',
+    unVerifyAccount: 'unVerifyAccount',
+    validationFailed: 'validationFailed',
 };
 const isErrorKinds = (message) => {
     return Object.values(exports.errorKinds).includes(message);
@@ -31,58 +31,58 @@ class AppError extends Error {
         this.statusCode = this.getStatus();
         Error.captureStackTrace(this, this.constructor);
     }
-    static new(error = exports.errorKinds.internalServerError, message = "internal Server Error", payload) {
+    static new(error = exports.errorKinds.internalServerError, message = 'internal Server Error', payload) {
         return payload
             ? new AppError(error, message, payload)
             : new AppError(error, message);
     }
     errorPayload(payload) {
         return {
+            errors: payload !== null && payload !== void 0 ? payload : {},
             message: this.message,
-            errors: payload ? payload : {},
         };
     }
     getStatus() {
         // let error_status : StatusCode = StatusCode.InternalServerError;
         switch (this.error) {
-            case exports.errorKinds.internalServerError:
-                this.statusCode = Status_1.StatusCode.InternalServerError;
-                break;
-            case exports.errorKinds.invalidToken:
-                this.statusCode = Status_1.StatusCode.Forbidden;
-                break;
-            case exports.errorKinds.notFound:
-                this.statusCode = Status_1.StatusCode.NotFound;
-                break;
-            case exports.errorKinds.notAuthorized:
-                this.statusCode = Status_1.StatusCode.Unauthorized;
-                break;
-            case exports.errorKinds.validationFailed:
-                this.statusCode = Status_1.StatusCode.UnprocessableEntity;
-                break;
-            case exports.errorKinds.invalidCredential:
-                this.statusCode = Status_1.StatusCode.UnprocessableEntity;
-                break;
-            case exports.errorKinds.alreadyExist:
-                this.statusCode = Status_1.StatusCode.Conflict;
-                break;
-            case exports.errorKinds.forbidden:
-                this.statusCode = Status_1.StatusCode.Forbidden;
-                break;
             case exports.errorKinds.accessDenied:
                 this.statusCode = Status_1.StatusCode.Forbidden;
                 break;
-            case exports.errorKinds.unVerifyAccount:
-                this.statusCode = Status_1.StatusCode.Forbidden;
-                break;
-            case exports.errorKinds.oauthAccountAlreadyExist:
+            case exports.errorKinds.alreadyExist:
                 this.statusCode = Status_1.StatusCode.Conflict;
                 break;
             case exports.errorKinds.badRequest:
                 this.statusCode = Status_1.StatusCode.BadRequest;
                 break;
+            case exports.errorKinds.forbidden:
+                this.statusCode = Status_1.StatusCode.Forbidden;
+                break;
+            case exports.errorKinds.internalServerError:
+                this.statusCode = Status_1.StatusCode.InternalServerError;
+                break;
+            case exports.errorKinds.invalidCredential:
+                this.statusCode = Status_1.StatusCode.UnprocessableEntity;
+                break;
+            case exports.errorKinds.invalidToken:
+                this.statusCode = Status_1.StatusCode.Forbidden;
+                break;
             case exports.errorKinds.mailboxUnavailable:
                 this.statusCode = Status_1.StatusCode.MailboxUnavailable;
+                break;
+            case exports.errorKinds.notAuthorized:
+                this.statusCode = Status_1.StatusCode.Unauthorized;
+                break;
+            case exports.errorKinds.notFound:
+                this.statusCode = Status_1.StatusCode.NotFound;
+                break;
+            case exports.errorKinds.oauthAccountAlreadyExist:
+                this.statusCode = Status_1.StatusCode.Conflict;
+                break;
+            case exports.errorKinds.unVerifyAccount:
+                this.statusCode = Status_1.StatusCode.Forbidden;
+                break;
+            case exports.errorKinds.validationFailed:
+                this.statusCode = Status_1.StatusCode.UnprocessableEntity;
                 break;
         }
         return this.statusCode;

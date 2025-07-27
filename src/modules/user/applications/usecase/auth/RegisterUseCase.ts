@@ -28,6 +28,9 @@ export class RegisterUseCase implements IUser {
         roleId: data.roleId ?? 2,
         updatedAt: new Date(),
         username: data.username,
+        photo: data.photo ?? null //add photo or null
+
+       
       })
     );
     if (error) throw error;
