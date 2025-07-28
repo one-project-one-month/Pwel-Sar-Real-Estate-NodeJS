@@ -1,56 +1,55 @@
 import { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
 import { LogoutUseCase } from 'modules/user/applications/usecase/auth/LogoutUseCase';
 import { RegisterUseCase } from 'modules/user/applications/usecase/auth/RegisterUseCase';
+import { uploadToCloudinary } from 'utils/cloudinary';
 import { AppError, catchErrorAsync, errorKinds } from 'utils/error-handling';
-import fs from "fs";
 
 import { Container } from '../di/Container';
 // import { AuthRepository } from 'modules/user/infrastructures/repositories/AuthRepository';
 import { LoginUseCase } from './../../applications/usecase/auth/LoginUseCase';
 import { RefreshAccessTokenUseCase } from './../../applications/usecase/auth/RefreshAccessTokenUseCase';
-import { uploadToCloudinary } from 'utils/cloudinary';
 export class AuthController {
   async create(req: Request, res: Response, next: NextFunction) {
     console.log(req.files);
-    
-    const { email, password, username } = req.body;
-    let photoUrl: string | null=null
 
-    const files = req.files as {[fieldname: string]: Express.Multer.File[]}
-    const photoPath = files.photo?.[0].path
+    const { email, password, username } = req.body;
+    let photoUrl: null | string = null;
+
+    // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const photoPath = files.photo?.[0].path;
 
     console.log(req.body);
 
     try {
-
-      if(photoPath){
-       try {
-         photoUrl = await uploadToCloudinary(photoPath)
-       } catch (error) {
-        console.log(error);
-        fs.unlinkSync(photoPath)
-       }
+      if (photoPath) {
+        try {
+          photoUrl = await uploadToCloudinary(photoPath);
+        } catch (error) {
+          console.log(error);
+          fs.unlinkSync(photoPath);
+        }
       }
 
       const registerUseCase = new RegisterUseCase(Container.authRepository);
       const [error, result] = await catchErrorAsync(
-        registerUseCase.execute({ email, password, username, photo: photoUrl })
+        registerUseCase.execute({ email, password, photo: photoUrl, username })
       );
-      
+
       if (error) {
-        console.error("Error in registerUseCase:", error);
+        console.error('Error in registerUseCase:', error);
         next(error);
         return;
       }
-      
-      console.log("User created:", result);
-      
+
+      console.log('User created:', result);
+
       res.status(201).json({ user: result });
-      
     } catch (error) {
-      console.log("Error at registeration");
-      fs.unlinkSync(photoPath)
-      next(error)
+      console.log('Error at registeration');
+      fs.unlinkSync(photoPath);
+      next(error);
     }
   }
 

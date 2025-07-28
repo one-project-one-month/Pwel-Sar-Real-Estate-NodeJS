@@ -19,10 +19,10 @@ export class AuthRepository implements IAuthRepository {
       email: user.email,
       id: user.id,
       password: user.password,
+      photo: user.photo, //add photo
       roleId: user.roleId,
       updatedAt: user.updatedAt,
       username: user.username,
-      photo: user.photo //add photo
     });
     return newUser;
   }
@@ -105,10 +105,10 @@ export class AuthRepository implements IAuthRepository {
       email: user.email,
       id: user.id,
       password: user.password,
+      photo: user.photo, //add photo
       roleId: user.roleId,
       updatedAt: user.updatedAt,
       username: user.username,
-      photo: user.photo //add photo
     });
   }
 
@@ -124,10 +124,10 @@ export class AuthRepository implements IAuthRepository {
       email: user.email,
       id: user.id,
       password: user.password,
+      photo: user.photo, //add photo
       roleId: user.roleId,
       updatedAt: user.updatedAt,
       username: user.username,
-      photo: user.photo //add photo
     });
   }
 

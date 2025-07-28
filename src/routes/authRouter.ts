@@ -14,7 +14,7 @@ const authRouter = Router();
 
 authRouter.post(
   '/register',
-  upload.fields([{name:"photo", maxCount:1}]),
+  upload.fields([{ maxCount: 1, name: 'photo' }]),
   validationMiddleware.validateRequestBody(RegisterSchema),
   authController.create
 );
