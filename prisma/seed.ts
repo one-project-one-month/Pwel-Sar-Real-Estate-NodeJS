@@ -77,6 +77,38 @@ async function main() {
     where: { email: 'support@example.com' },
   });
 
+  await prisma.ownerProfile.upsert({
+    create: {
+      userId: 1,
+      nrcNo: '18/STU(N)112233',
+      address: "123 Main St, Downtown",
+      phone: "09123456701"
+    },
+    update: {},
+    where: {
+      userId: 1
+    }
+  })
+
+  const propertyTypes = [
+    { name: 'Apartment' },
+    { name: 'Condo' },
+    { name: 'House' },
+    { name: 'Land' },
+    { name: 'Commercial' },
+    { name: 'Industrial' }
+  ];
+
+  for (const propertyType of propertyTypes) {
+    await prisma.propertyType.upsert({
+      create: {
+        name: propertyType.name,
+      },
+      update: {},
+      where: { name: propertyType.name },
+    });
+  }
+
   console.log('✅ Seed completed.');
 }
 
