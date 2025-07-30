@@ -1,8 +1,11 @@
-import dotenv from "dotenv";
+import fs from 'fs';
+import dotenv from 'dotenv';
 
-const mode =
-  process.argv.find((arg) => arg.startsWith("--mode="))?.split("=")[1] ||
-  "development";
-dotenv.config({
-  path: `.env.${mode}`,
-});
+const envPath = process.env.ENV_FILE || '.env';
+
+// Only load if the file actually exists
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+} else {
+  console.warn(`⚠️  Env file not found at: ${envPath}`);
+}

@@ -29,8 +29,8 @@ export default class AgentController {
 
     const [error, modifiedAgent] = await catchErrorAsync(
       this._agentUseCase.approveOrRejectAgentRegistrationAsync(
-        agentId,
         req.body,
+        agentId,
         approvingAdminId
       )
     );

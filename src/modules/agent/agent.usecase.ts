@@ -34,8 +34,8 @@ export class AgentUseCase implements IAgentUseCase {
   }
 
   async approveOrRejectAgentRegistrationAsync(
-    agentId: number,
     req: AgentRegistrationApproveRequestDto,
+    agentId: number,
     approvingAdminId: number
   ): Promise<AgentResponseDto> {
     // TODO:

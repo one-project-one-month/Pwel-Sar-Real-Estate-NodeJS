@@ -1,13 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "baseUrl": "src",
+    "rootDir": "src",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "target": "es2020",
     "module": "commonjs",
-    "baseUrl": "./src",
-    "outDir": "./dist",
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "strict": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["**/*.ts", "**/*.js"]
+  "include": ["src/**/*.ts", "src/**/*.js"],
+  "exclude": ["node_modules", "dist", "tests"]
 }
