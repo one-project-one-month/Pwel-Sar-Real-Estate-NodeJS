@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { PostController } from 'modules/post/api/controllers/PostController';
+import { upload } from 'modules/user/api/middlewares/multer';
 import passport from 'passport';
 
 const postRouter = Router();
@@ -14,6 +15,7 @@ postRouter.get(
 
 postRouter.post(
   '/create',
+  upload.array('photos'),
   passport.authenticate('access-jwt', { session: false }),
   postController.createPendingPost
 );
