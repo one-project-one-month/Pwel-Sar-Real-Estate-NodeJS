@@ -7,6 +7,7 @@ import {
 } from 'modules/post/domain/entities/Post.entity';
 import { IPostRepositories } from 'modules/post/domain/repositories/IPostRepository';
 import { AppError } from 'utils/error-handling';
+import { buildRangeFilter } from 'utils/post/buildFilterRange';
 
 export class PostRepositories implements IPostRepositories {
   async createPending(params: IPost): Promise<Post> {
@@ -73,14 +74,57 @@ export class PostRepositories implements IPostRepositories {
     }
   }
 
-  async getAllPosts(): Promise<Post[]> {
+  async getAllPosts(filterOption: any): Promise<Post[]> {
     try {
+      // const posts = await prisma.post.findMany({
+      //   include: {
+      //     property: true,
+      //   },
+      //   orderBy: {
+      //     createdAt: 'desc',
+      //   },
+      // });
+      const {
+        bathRoomMax,
+        bathRoomMin,
+        bedRoomMax,
+        bedRoomMin,
+        currency,
+        floorMax,
+        floorMin,
+        lengthMax,
+        lengthMin,
+        postType,
+        region,
+        status,
+        township,
+        widthMax,
+        widthMin,
+      } = filterOption;
+
       const posts = await prisma.post.findMany({
-        include: {
-          property: true,
-        },
-        orderBy: {
-          createdAt: 'desc',
+        include: { property: true },
+        orderBy: { createdAt: 'desc' },
+        where: {
+          property: {
+            some: {
+              ...(township && {
+                township: { contains: township, mode: 'insensitive' },
+              }),
+              ...(region && {
+                region: { contains: region, mode: 'insensitive' },
+              }),
+              ...(currency && { currency }),
+
+              ...buildRangeFilter('bedRoom', bedRoomMin, bedRoomMax),
+              ...buildRangeFilter('bathRoom', bathRoomMin, bathRoomMax),
+              ...buildRangeFilter('floor', floorMin, floorMax),
+              ...buildRangeFilter('length', lengthMin, lengthMax),
+              ...buildRangeFilter('width', widthMin, widthMax),
+            },
+          },
+          ...(status && { status: status as PostStatus }),
+          ...(postType && { type: postType as PostType }),
         },
       });
 
