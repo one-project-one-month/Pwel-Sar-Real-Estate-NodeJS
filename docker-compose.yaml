@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  api:
+    image: pwelser-service
+    # ports:
+    # - target: 4000
+    expose:
+      - 4000
+    env_file:
+      - ./.env
+    deploy:
+      mode: replicated
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+    networks:
+      - pwelser-service
+
+  nginx:
+    image: nginx:1.29.0
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    # deploy:
+    #   mode: replicated
+    #   replicas: 1
+    networks:
+      - pwelser-service
+
+networks:
+  pwelser-service:
+    driver: bridge
