@@ -126,4 +126,19 @@ export class PostRepositories implements IPostRepositories {
       );
     }
   }
+
+  async addToWishList(data: any): Promise<any> {
+    try {
+      const wishlist = await prisma.wishlist.create({
+        data,
+      });
+
+      return wishlist;
+    } catch (error) {
+      throw AppError.new(
+        'internalErrorServer',
+        `Something went wrong: ${error}`
+      );
+    }
+  }
 }

@@ -15,10 +15,30 @@ import router from 'routes';
 const app = express();
 const port = AppConfig.getConfig('PORT');
 
+const whitelist = [
+  'http://localhost:5173',
+  'http://172.20.10.3:5173',
+  process.env.FRONTEND,
+];
+
+const corsOptions = {
+  origin: function (
+    origin: any,
+    callback: (err: Error | null, origin?: any) => void
+  ) {
+    if (!origin || whitelist.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(express.json());
-app.use(cors());
 app.use(cookieParser());
 app.use('/api', router);
 

@@ -1,26 +1,22 @@
 import bcrypt from 'bcrypt';
-
-import { PrismaClient } from '../generated/prisma';
+import { PrismaClient, RoleName } from '../generated/prisma';
 
 const prisma = new PrismaClient();
 
 async function main() {
   const roles = [
-    { name: 'Admin', value: 'super_admin' },
-    { name: 'User', value: 'general_user' },
-    { name: 'Agent', value: 'property_agent' },
+    { name: RoleName.Admin, value: 'super_admin' },
+    { name: RoleName.User, value: 'general_user' },
+    { name: RoleName.Agent, value: 'property_agent' },
   ];
 
-  const roleMap: Record<string, number> = {};
+  const roleMap: Record<RoleName, number> = {} as Record<RoleName, number>;
 
   for (const role of roles) {
     const created = await prisma.role.upsert({
-      create: {
-        name: role.name as any,
-        value: role.value,
-      },
+      where: { name: role.name },
+      create: { name: role.name, value: role.value },
       update: { value: role.value },
-      where: { name: role.name as any },
     });
     roleMap[role.name] = created.id;
   }
@@ -42,7 +38,7 @@ async function main() {
       data: {
         action: perm.action,
         resource: perm.resource,
-        role: { connect: { id: roleMap.Admin } },
+        role: { connect: { id: roleMap[RoleName.Admin] } },
       },
     });
     permissionIds.push(created.id);
@@ -50,31 +46,31 @@ async function main() {
 
   for (const permissionId of permissionIds) {
     await prisma.rolePermission.upsert({
-      create: {
-        permissionId,
-        roleId: roleMap.Admin,
-      },
-      update: {},
       where: {
         roleId_permissionId: {
+          roleId: roleMap[RoleName.Admin],
           permissionId,
-          roleId: roleMap.Admin,
         },
       },
+      create: {
+        roleId: roleMap[RoleName.Admin],
+        permissionId,
+      },
+      update: {},
     });
   }
 
   const hashedPassword = await bcrypt.hash('Admin123!', 10);
 
   await prisma.user.upsert({
+    where: { email: 'support@example.com' },
     create: {
       email: 'support@example.com',
       password: hashedPassword,
-      role: { connect: { id: roleMap.Admin } },
+      role: { connect: { id: roleMap[RoleName.Admin] } },
       username: 'support',
     },
     update: {},
-    where: { email: 'support@example.com' },
   });
 
   console.log('✅ Seed completed.');

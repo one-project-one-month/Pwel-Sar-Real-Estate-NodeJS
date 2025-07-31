@@ -29,6 +29,7 @@ model User {
     refreshTokens       RefreshToken[]      @relation("TokenUser")
     role                Role                @relation(fields: [roleId], references: [id])
     photos              UserPhoto[]
+    Wishlist            Wishlist[]
 
     @@map("user")
 }
@@ -87,6 +88,7 @@ model Post {
     admin       User?         @relation("PostAdmin", fields: [adminId], references: [id])
     user        User          @relation("PostUser", fields: [userId], references: [id])
     property    Property[]
+    Wishlist    Wishlist[]
 
     @@map("post")
 }
@@ -216,6 +218,17 @@ model Rating {
     user      User         @relation(fields: [userId], references: [id])
 
     @@map("rating")
+}
+
+model Wishlist {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    postId    Int
+    createdAt DateTime @default(now())
+    user      User     @relation(fields: [userId], references: [id])
+    post      Post     @relation(fields: [postId], references: [id])
+
+    @@map("wishlist")
 }
 
 enum AgentProfileStatus {

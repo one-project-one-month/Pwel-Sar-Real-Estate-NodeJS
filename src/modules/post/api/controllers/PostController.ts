@@ -7,6 +7,7 @@ import { VerifyPostUseCase } from 'modules/post/application/usecases/VerifyPostU
 import { AppError, errorKinds } from 'utils/error-handling';
 
 import { Container } from '../di/Container';
+import { AddToWishlistUseCase } from 'modules/post/application/usecases/AddToWishlistUseCase';
 
 export class PostController {
   // eslint-disable-next-line no-unused-vars
@@ -103,6 +104,32 @@ export class PostController {
       res.status(201).json(result);
     } catch (error) {
       throw AppError.new(errorKinds.badRequest, `${error}`);
+    }
+  }
+
+  async addToWishlist(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    console.log('Controller Arrived!');
+    try {
+      const postId = Number(req.params.id);
+      const user = req.user as { id: number };
+      console.log('Recieved Data: Post ID:', postId, 'User ID:', user.id);
+
+      const addToWishlistUseCase = new AddToWishlistUseCase(
+        Container.postRepository
+      );
+
+      await addToWishlistUseCase.execute({
+        postId,
+        userId: user.id,
+      });
+
+      res.status(201).json({ message: 'Post added to wishlist' });
+    } catch (error) {
+      next(AppError.new(errorKinds.badRequest, `${error}`));
     }
   }
 }

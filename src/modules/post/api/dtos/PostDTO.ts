@@ -25,3 +25,11 @@ export class PostDTO {
     this.property = post.property;
   }
 }
+
+export class AddToWishlistReqDto {
+  postId: number;
+
+  constructor(data: any) {
+    this.postId = data.postId;
+  }
+}

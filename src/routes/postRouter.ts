@@ -36,4 +36,10 @@ postRouter.delete(
   postController.deletePost
 );
 
+postRouter.post(
+  '/:id/wishlists',
+  passport.authenticate('access-jwt', { session: false }),
+  postController.addToWishlist
+);
+
 export default postRouter;

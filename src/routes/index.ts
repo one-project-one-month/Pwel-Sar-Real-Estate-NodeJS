@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { checkPermissionMiddleware } from 'modules/user/api/middlewares/checkPermissionMIddleware';
 import { AppError, errorKinds } from 'utils/error-handling';
 
-import agentRouter from './agentRouter';
+// import agentRouter from './agentRouter';
 import authRouter from './authRouter';
 import ownerRouter from './ownerRouter';
 import postRouter from './postRouter';
@@ -23,7 +23,7 @@ router.get(
 router.use('/owners', ownerRouter);
 router.use('/users', userRouter);
 router.use('/auth', authRouter);
-router.use('/agent-profiles', agentRouter);
+// router.use('/agent-profiles', agentRouter);
 router.use('/posts', postRouter);
 
 //404 handler

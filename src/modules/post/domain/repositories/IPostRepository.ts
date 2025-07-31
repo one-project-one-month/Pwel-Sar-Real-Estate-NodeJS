@@ -14,4 +14,6 @@ export interface IPostRepositories {
 
   // eslint-disable-next-line no-unused-vars
   verifyPost(data: any): Promise<Post>;
+
+  addToWishList(data: any): Promise<any>;
 }
