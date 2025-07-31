@@ -26,7 +26,7 @@ postRouter.patch(
 
 postRouter.get(
   '/:id',
-  //   passport.authenticate('access-jwt', { session: false }),
+  passport.authenticate('access-jwt', { session: false }),
   postController.getPostDetail
 );
 
@@ -37,7 +37,7 @@ postRouter.delete(
 );
 
 postRouter.post(
-  '/:id/wishlists',
+  '/:id/wishlist',
   passport.authenticate('access-jwt', { session: false }),
   postController.addToWishlist
 );

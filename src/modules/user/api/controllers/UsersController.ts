@@ -4,6 +4,7 @@ import { UserRepository } from 'modules/user/infrastructures/repositories/UserRe
 import { AppError, errorKinds } from 'utils/error-handling';
 
 import { GetUserListParamType } from '../params/getUserlistParamSchema';
+import { GetUserWishlistUseCase } from 'modules/user/applications/usecase/GetUserWishlistUseCase';
 
 const getUserListUseCase = new GetUserListUseCase(new UserRepository());
 
@@ -20,6 +21,26 @@ class UsersController {
         searchBy: searchBy as GetUserListParamType['searchBy'],
       });
       res.status(200).json(result);
+    } catch (error) {
+      error instanceof AppError
+        ? next(error)
+        : next(
+            AppError.new(
+              errorKinds.internalServerError,
+              'userController : internal Server Error'
+            )
+          );
+    }
+  }
+
+  async getWishlist(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = req.user as any;
+      const getUserWishlistUseCase = new GetUserWishlistUseCase(
+        new UserRepository()
+      );
+      const wishlist = await getUserWishlistUseCase.execute(user.id);
+      res.status(200).json(wishlist);
     } catch (error) {
       error instanceof AppError
         ? next(error)

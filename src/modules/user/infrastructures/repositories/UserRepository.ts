@@ -5,10 +5,23 @@ import {
   IUserRepository,
 } from 'modules/user/domain/repositories';
 import { AppError, catchErrorAsync } from 'utils/error-handling';
+import { PostRepositories } from 'modules/post/infrastructure/repositories/PostRepository';
+import { PropertyRepository } from 'modules/post/infrastructure/repositories/PropertyRepository';
+import {
+  WishlistItemResponse,
+  WishlistRespone,
+} from '../../applications/dtos/WishlistDTO';
 
 import { prisma } from '../../../../libs/prismaClients';
 
 export class UserRepository implements IUserRepository {
+  private postRepository: PostRepositories;
+  private propertyRepository: PropertyRepository;
+
+  constructor() {
+    this.postRepository = new PostRepositories();
+    this.propertyRepository = new PropertyRepository();
+  }
   async create(data: any): Promise<User> {
     //:TODO change any
     const user = await prisma.user.create({ data });
@@ -115,4 +128,115 @@ export class UserRepository implements IUserRepository {
         }
       : {};
   };
+
+  async getWishlistByUserId(userId: number): Promise<WishlistRespone> {
+    try {
+      const rawWishlist = await prisma.wishlist.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      const wishlistWithDetails = await Promise.all(
+        rawWishlist.map(async (wishlistItem) => {
+          const post = await this.getPostWithDetails(wishlistItem.postId);
+
+          return new WishlistItemResponse({
+            id: wishlistItem.id,
+            userId: wishlistItem.userId,
+            postId: wishlistItem.postId,
+            createdAt: wishlistItem.createdAt,
+            post: post,
+          });
+        })
+      );
+
+      const userWishlist = new WishlistRespone(userId, wishlistWithDetails);
+      return userWishlist;
+    } catch (error) {
+      throw AppError.new(
+        'internalErrorServer',
+        `Prisma error while getting wishlist by user id: ${error}`
+      );
+    }
+  }
+
+  private async getPostWithDetails(postId: number): Promise<any> {
+    try {
+      const post = await prisma.post.findUnique({
+        where: { id: postId },
+      });
+
+      if (!post) {
+        throw new Error(`Post with id ${postId} not found`);
+      }
+      const properties = await this.getPropertiesWithDetails(postId);
+
+      return {
+        id: post.id,
+        description: post.description,
+        userId: post.userId,
+        status: post.status,
+        adminId: post.adminId,
+        phone: post.phone,
+        socialLink: post.socialLink,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        type: post.type,
+        property: properties,
+      };
+    } catch (error) {
+      throw AppError.new(
+        'internalErrorServer',
+        `Error fetching post details: ${error}`
+      );
+    }
+  }
+
+  // TO-DO: improve type strictness and error handling
+  private async getPropertiesWithDetails(postId: number): Promise<any[]> {
+    try {
+      const properties = await prisma.property.findMany({
+        where: { postId },
+        include: {
+          propertyType: true,
+          photos: true,
+        },
+      });
+
+      return properties.map((property) => ({
+        id: property.id,
+        ownerId: property.ownerId,
+        propertyTypeId: property.propertyTypeId,
+        bedRoom: property.bedRoom,
+        bathRoom: property.bathRoom,
+        latitude: property.latitude,
+        longitude: property.longitude,
+        buildingNumber: property.buildingNumber,
+        street: property.street,
+        floor: property.floor,
+        township: property.township,
+        region: property.region,
+        length: property.length,
+        width: property.width,
+        currency: property.currency,
+        createdAt: property.createdAt,
+        postId: property.postId,
+        updatedAt: property.updatedAt,
+        propertyType: {
+          id: property.propertyType.id,
+          name: property.propertyType.name,
+        },
+        photos: property.photos.map((photo) => ({
+          id: photo.id,
+          path: photo.path,
+          propertyId: photo.propertyId,
+        })),
+      }));
+    } catch (error) {
+      throw AppError.new(
+        'internalErrorServer',
+        `Error fetching property details: ${error}`
+      );
+    }
+  }
 }
