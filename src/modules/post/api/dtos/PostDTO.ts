@@ -33,3 +33,26 @@ export class AddToWishlistReqDto {
     this.postId = data.postId;
   }
 }
+
+export class PaginationReqDto {
+  page: number;
+  limit: number;
+
+  constructor(data: any) {
+    this.page = data.page || 1;
+    this.limit = data.limit || 10;
+  }
+}
+
+export interface PostQueryParams {
+  cursor?: string;
+  take?: string;
+  region?: string;
+  township?: string;
+  street?: string;
+  propertyType?: string;
+  postType?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  search?: string;
+}

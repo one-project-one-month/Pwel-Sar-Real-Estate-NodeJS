@@ -1,5 +1,9 @@
 import { prisma } from 'libs/prismaClients';
 import {
+  PaginationReqDto,
+  PostQueryParams,
+} from 'modules/post/api/dtos/PostDTO';
+import {
   IPost,
   Post,
   PostStatus,
@@ -73,26 +77,73 @@ export class PostRepositories implements IPostRepositories {
     }
   }
 
-  async getAllPosts(): Promise<Post[]> {
+  async getAllPosts(
+    query: PostQueryParams,
+    pagination: PaginationReqDto = { page: 1, limit: 10 }
+  ): Promise<{ posts: Post[]; count: number }> {
     try {
-      const posts = await prisma.post.findMany({
-        include: {
-          property: true,
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-      });
+      const {
+        region,
+        township,
+        street,
+        propertyType,
+        postType,
+        minPrice,
+        maxPrice,
+        search,
+      } = query;
 
-      //   console.log(posts);
+      const { page = 1, limit = 10 } = pagination;
+      const skip = (page - 1) * limit;
 
-      return posts.map((post) => {
+      console.log('pagination', JSON.stringify(pagination));
+
+      const where: any = {
+        ...(postType && { type: postType }),
+        property: {
+          ...(region && { region: { contains: region, mode: 'insensitive' } }),
+          ...(township && {
+            township: { contains: township, mode: 'insensitive' },
+          }),
+          ...(street && { street: { contains: street, mode: 'insensitive' } }),
+          ...(propertyType && { type: propertyType }),
+          ...(minPrice && { price: { gte: minPrice } }),
+          ...(maxPrice && {
+            price: {
+              ...(minPrice ? { gte: minPrice } : {}),
+              lte: maxPrice,
+            },
+          }),
+        },
+      };
+
+      if (search) {
+        where.OR = [
+          { title: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+        ];
+      }
+
+      const [posts, count] = await Promise.all([
+        prisma.post.findMany({
+          where,
+          include: { property: true },
+          skip,
+          take: Number(limit),
+          orderBy: { createdAt: 'desc' },
+        }),
+        prisma.post.count({ where }),
+      ]);
+
+      const mapped = posts.map((post) => {
         return new Post({
           ...post,
           status: post.status as PostStatus,
           type: post.type as PostType,
         });
       });
+
+      return { posts: mapped, count };
     } catch (error) {
       throw AppError.new(
         'internalErrorServer',

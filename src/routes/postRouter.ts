@@ -6,11 +6,7 @@ const postRouter = Router();
 
 const postController = new PostController();
 
-postRouter.get(
-  '/',
-  passport.authenticate('access-jwt', { session: false }),
-  postController.getAllPosts
-);
+postRouter.get('/', postController.getAllPosts);
 
 postRouter.post(
   '/create',

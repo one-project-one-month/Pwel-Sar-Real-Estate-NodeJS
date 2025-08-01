@@ -8,6 +8,7 @@ import { AppError, errorKinds } from 'utils/error-handling';
 
 import { Container } from '../di/Container';
 import { AddToWishlistUseCase } from 'modules/post/application/usecases/AddToWishlistUseCase';
+import { PaginationReqDto, PostQueryParams } from '../dtos/PostDTO';
 
 export class PostController {
   // eslint-disable-next-line no-unused-vars
@@ -58,14 +59,22 @@ export class PostController {
     try {
       const getAllPostsUseCase = new GetAllPostsUseCase(
         Container.postRepository
-        // Container.propertyRepository
       );
 
-      const result = await getAllPostsUseCase.execute();
+      const { cursor, take, ...query } = req.query as PostQueryParams;
+
+      const pagination: PaginationReqDto = {
+        page: cursor ? parseInt(cursor) : 1,
+        limit: take ? parseInt(take) : 10,
+      };
+
+      const result = await getAllPostsUseCase.execute(query, pagination);
+
+      console.log('Result:', JSON.stringify(result));
 
       res.status(200).json(result);
     } catch (error) {
-      throw AppError.new(errorKinds.badRequest, `${error}`);
+      next(AppError.new(errorKinds.badRequest, `${error}`));
     }
   }
 
