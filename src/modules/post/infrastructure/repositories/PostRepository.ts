@@ -76,14 +76,6 @@ export class PostRepositories implements IPostRepositories {
 
   async getAllPosts(filterOption: any): Promise<Post[]> {
     try {
-      // const posts = await prisma.post.findMany({
-      //   include: {
-      //     property: true,
-      //   },
-      //   orderBy: {
-      //     createdAt: 'desc',
-      //   },
-      // });
       const {
         bathRoomMax,
         bathRoomMin,
@@ -92,11 +84,15 @@ export class PostRepositories implements IPostRepositories {
         currency,
         floorMax,
         floorMin,
+        isAdminPost,
+        isAgentPost,
+        isOwnerPost,
         lengthMax,
         lengthMin,
         postType,
         region,
         status,
+        street,
         township,
         widthMax,
         widthMin,
@@ -115,7 +111,9 @@ export class PostRepositories implements IPostRepositories {
                 region: { contains: region, mode: 'insensitive' },
               }),
               ...(currency && { currency }),
-
+              ...(street && {
+                street: { contains: street, mode: 'insensitive' },
+              }),
               ...buildRangeFilter('bedRoom', bedRoomMin, bedRoomMax),
               ...buildRangeFilter('bathRoom', bathRoomMin, bathRoomMax),
               ...buildRangeFilter('floor', floorMin, floorMax),
@@ -125,10 +123,23 @@ export class PostRepositories implements IPostRepositories {
           },
           ...(status && { status: status as PostStatus }),
           ...(postType && { type: postType as PostType }),
+          ...(isAgentPost && {
+            user: {
+              roleId: 3,
+            },
+          }),
+          ...(isAdminPost && {
+            user: {
+              roleId: 1,
+            },
+          }),
+          ...(isOwnerPost && {
+            user: {
+              roleId: 2,
+            },
+          }),
         },
       });
-
-      //   console.log(posts);
 
       return posts.map((post) => {
         return new Post({

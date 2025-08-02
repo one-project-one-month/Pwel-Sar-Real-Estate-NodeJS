@@ -68,11 +68,15 @@ export class PostController {
         currency,
         floorMax,
         floorMin,
+        isAdminPost,
+        isAgentPost,
+        isOwnerPost,
         lengthMax,
         lengthMin,
         postType,
         region,
         status,
+        street,
         township,
         widthMax,
         widthMin,
@@ -86,18 +90,20 @@ export class PostController {
         currency: currency ? Number(currency) : undefined,
         floorMax: floorMax ? Number(floorMax) : undefined,
         floorMin: floorMin ? Number(floorMin) : undefined,
-
+        isAdminPost: isAdminPost === 'true' ? true : undefined,
+        isAgentPost: isAgentPost === 'true' ? true : undefined,
+        isOwnerPost: isOwnerPost === 'true' ? true : undefined,
         lengthMax: lengthMax ? Number(lengthMax) : undefined,
         lengthMin: lengthMin ? Number(lengthMin) : undefined,
         postType: postType as PostType,
         region,
         status: status as PostStatus,
+        street,
         township,
         widthMax: widthMax ? Number(widthMax) : undefined,
         widthMin: widthMin ? Number(widthMin) : undefined,
       };
       // const filterOptions = req.query;
-      console.log('query log ====>', filters);
       const result = await getAllPostsUseCase.execute(filters);
 
       res.status(200).json(result);
