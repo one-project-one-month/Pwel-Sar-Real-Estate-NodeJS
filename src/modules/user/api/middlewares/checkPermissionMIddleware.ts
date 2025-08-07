@@ -13,7 +13,10 @@ export const checkPermissionMiddleware = (permission: {
 }) => {
   return async function (req: Request, res: Response, next: NextFunction) {
     try {
-      const roleID = 1; //TODO: get user role;
+      const user = req.user as any;
+
+      const roleID = user.roleId; //TODO: get user role;
+
       if (!roleID)
         throw AppError.new(errorKinds.notAuthorized, 'Missing user role');
 

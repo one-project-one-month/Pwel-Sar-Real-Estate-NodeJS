@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { NextFunction, Request, Response } from 'express';
 import { checkPermissionMiddleware } from 'modules/user/api/middlewares/checkPermissionMIddleware';
+import passport from 'passport';
 import { AppError, errorKinds } from 'utils/error-handling';
 
 import agentRouter from './agentRouter';
@@ -12,6 +13,7 @@ import userRouter from './userRouter';
 const router = Router();
 router.get(
   '/healthCheck',
+  passport.authenticate('access-jwt', { session: false }),
   checkPermissionMiddleware({ action: 'edit', resource: 'property' }),
   async (req: Request, res: Response) => {
     res.sendStatus(200);
