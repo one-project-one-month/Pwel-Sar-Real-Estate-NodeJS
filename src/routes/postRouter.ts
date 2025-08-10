@@ -9,7 +9,7 @@ const postController = new PostController();
 
 postRouter.get(
   '/',
-  passport.authenticate('access-jwt', { session: false }),
+  //   passport.authenticate('access-jwt', { session: false }),
   postController.getAllPosts
 );
 
