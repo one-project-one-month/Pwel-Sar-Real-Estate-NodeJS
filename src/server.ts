@@ -2,7 +2,7 @@ import './config/passport.config';
 import 'reflect-metadata';
 
 import './config/env/dotenv';
-import './config/di.container';
+// import './config/di.container';
 
 import bodyParser from 'body-parser';
 import AppConfig from 'config/env/app-config';

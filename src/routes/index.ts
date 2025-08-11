@@ -25,7 +25,7 @@ router.get(
 router.use('/owners', ownerRouter);
 router.use('/users', userRouter);
 router.use('/auth', authRouter);
-router.use('/agent-profiles', agentRouter);
+router.use('/agent', agentRouter);
 router.use('/posts', postRouter);
 
 //404 handler

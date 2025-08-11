@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { Token } from '../entitiies/Token.entity';
-import { User } from '../entitiies/User.entity';
+import { Token } from '../entities/Token.entity';
+import { User } from '../entities/User.entity';
 
 export interface IAuthRepository {
   create(data: any): Promise<User>;

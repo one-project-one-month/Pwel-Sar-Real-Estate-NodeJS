@@ -1,4 +1,4 @@
-import { Owner } from '../entitiies/Owner.entity';
+import { Owner } from '../entities/Owner.entity';
 
 export interface GetAllOwnerRequestType {
   limit?: number;

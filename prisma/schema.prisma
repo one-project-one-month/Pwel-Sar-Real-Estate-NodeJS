@@ -28,7 +28,7 @@ model User {
     ratings             Rating[]
     refreshTokens       RefreshToken[]      @relation("TokenUser")
     role                Role                @relation(fields: [roleId], references: [id])
-    Wishlist            Wishlist[]
+    wishlist            Wishlist[]
 
     @@map("user")
 }
@@ -59,7 +59,7 @@ model AgentProfile {
     id            Int                @id @default(autoincrement())
     userId        Int                @unique
     nrcNumber     String
-    licenseNumber Int                @map("New")
+    licenseNumber String             @map("New")
     address       String
     phone         String
     approvedAt    DateTime?
