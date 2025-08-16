@@ -47,7 +47,8 @@ export class PostController {
 
       const result = await deletePostUseCase.execute(id);
 
-      res.status(201).json(result);
+      res.status(200).json(result);
+      //   res.status(204);
     } catch (error) {
       throw AppError.new(errorKinds.badRequest, `${error}`);
     }
