@@ -7,7 +7,7 @@ import {
 import { catchErrorAsync } from 'utils/error-handling/CatchError';
 import Pagination from 'utils/pagination/Pagination';
 
-import { OwnerDTO } from '../dtos/OwnerDTO';
+import { OwnerDTO } from '../../dtos/OwnerDTO';
 
 interface IPropertyOwnerCase {
   // eslint-disable-next-line no-unused-vars

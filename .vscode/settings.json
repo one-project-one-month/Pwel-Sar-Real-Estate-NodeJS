@@ -11,5 +11,4 @@
   "[typescript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   }
-
 }

@@ -4,6 +4,7 @@ import { DeletePostUseCase } from 'modules/post/application/usecases/DeletePostU
 import { GetAllPostsUseCase } from 'modules/post/application/usecases/GetAllPostsUseCase';
 import { GetPostDetailUseCase } from 'modules/post/application/usecases/GetPostDetailUseCase';
 import { VerifyPostUseCase } from 'modules/post/application/usecases/VerifyPostUseCase';
+import { PostStatus, PostType } from 'modules/post/domain/entities/Post.entity';
 import { AppError, errorKinds } from 'utils/error-handling';
 import fs from 'fs';
 import { Container } from '../di/Container';
@@ -99,7 +100,8 @@ export class PostController {
 
       const result = await deletePostUseCase.execute(id);
 
-      res.status(201).json(result);
+      res.status(200).json(result);
+      //   res.status(204);
     } catch (error) {
       throw AppError.new(errorKinds.badRequest, `${error}`);
     }
@@ -112,8 +114,51 @@ export class PostController {
         Container.postRepository
         // Container.propertyRepository
       );
+      const {
+        bathRoomMax,
+        bathRoomMin,
+        bedRoomMax,
+        bedRoomMin,
+        currency,
+        floorMax,
+        floorMin,
+        isAdminPost,
+        isAgentPost,
+        isOwnerPost,
+        lengthMax,
+        lengthMin,
+        postType,
+        region,
+        status,
+        street,
+        township,
+        widthMax,
+        widthMin,
+      } = req.query;
 
-      const result = await getAllPostsUseCase.execute();
+      const filters = {
+        bathRoomMax: bathRoomMax ? Number(bathRoomMax) : undefined,
+        bathRoomMin: bathRoomMin ? Number(bathRoomMin) : undefined,
+        bedRoomMax: bedRoomMax ? Number(bedRoomMax) : undefined,
+        bedRoomMin: bedRoomMin ? Number(bedRoomMin) : undefined,
+        currency: currency ? Number(currency) : undefined,
+        floorMax: floorMax ? Number(floorMax) : undefined,
+        floorMin: floorMin ? Number(floorMin) : undefined,
+        isAdminPost: isAdminPost === 'true' ? true : undefined,
+        isAgentPost: isAgentPost === 'true' ? true : undefined,
+        isOwnerPost: isOwnerPost === 'true' ? true : undefined,
+        lengthMax: lengthMax ? Number(lengthMax) : undefined,
+        lengthMin: lengthMin ? Number(lengthMin) : undefined,
+        postType: postType as PostType,
+        region,
+        status: status as PostStatus,
+        street,
+        township,
+        widthMax: widthMax ? Number(widthMax) : undefined,
+        widthMin: widthMin ? Number(widthMin) : undefined,
+      };
+      // const filterOptions = req.query;
+      const result = await getAllPostsUseCase.execute(filters);
 
       res.status(200).json(result);
     } catch (error) {

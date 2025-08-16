@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { Token } from '../entitiies/Token.entity';
-import { User } from '../entitiies/User.entity';
+import { Token } from '../entities/Token.entity';
+import { User } from '../entities/User.entity';
 
 export interface IAuthRepository {
   create(data: any): Promise<User>;
@@ -12,7 +12,7 @@ export interface IAuthRepository {
     userId: number;
     // expiresAt: Date;
   }): Promise<void>;
-  deleteToken(userId: number): Promise<void>;
+  deleteToken(userId: number): Promise<Token>;
   findByEmail(email: string): Promise<null | User>;
   findById(id: number): Promise<null | User>;
   findToken(refreshToken: string): Promise<null | Token>;
