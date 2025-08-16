@@ -3,7 +3,7 @@ import {
   CreatePropertyOwnerUseCase,
   GetOwnerListUseCase,
   GetPropertyOwnerByIdUseCase,
-} from 'modules/user/applications/usecase/OwnerUsecase';
+} from 'modules/user/applications/usecase/owner/OwnerUsecase';
 import { PropertyOwnerRepository } from 'modules/user/infrastructures/repositories/OwnerRepository';
 import { AppError, errorKinds } from 'utils/error-handling/AppError';
 import { catchErrorAsync } from 'utils/error-handling/CatchError';

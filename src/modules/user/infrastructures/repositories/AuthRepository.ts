@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { prisma } from 'libs/prismaClients';
-import { Token } from 'modules/user/domain/entitiies/Token.entity';
-import { User } from 'modules/user/domain/entitiies/User.entity';
+import { Token } from 'modules/user/domain/entities/Token.entity';
+import { User } from 'modules/user/domain/entities/User.entity';
 import { IAuthRepository } from 'modules/user/domain/repositories/IAuthRepository';
 import { AppError } from 'utils/error-handling';
 
@@ -63,33 +63,21 @@ export class AuthRepository implements IAuthRepository {
     // return new Token(token.id, token.token, token.userId);
   }
 
-  //   async createRefreshToken(data: {
-  //     refreshToken: string;
-  //     userId: number;
-  //   }): Promise<Token> {
-  //     const token = await prisma.refreshToken.create({
-  //       data: {
-  //         token: data.refreshToken,
-  //         userId: data.userId,
-  //       },
-  //     });
-
-  //     if (!token)
-  //       throw AppError.new(
-  //         'internalErrorServer',
-  //         'Failed to create refresh token'
-  //       );
-
-  //     return new Token(token.id, token.token, token.userId);
-  //   }
-
-  async deleteToken(userId: number): Promise<void> {
-    const token = await prisma.refreshToken.deleteMany({
-      where: { userId },
-    });
+  async deleteToken(userId: number): Promise<Token> {
+    const token = await prisma.refreshToken.findFirst({ where: { userId } });
 
     if (!token)
       throw AppError.new('internalErrorServer', 'Failed to delete token');
+
+    const result = await prisma.refreshToken.delete({
+      where: { id: token.id },
+    });
+
+    return new Token(result.id, result.token, result.userId);
+    // return true;
+    // return tokens.map(
+    //   (token) => new Token(token.id, token.token, token.userId)
+    // );
   }
 
   async findByEmail(email: string): Promise<null | User> {

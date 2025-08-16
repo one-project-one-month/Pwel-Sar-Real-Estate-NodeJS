@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { PostController } from 'modules/post/api/controllers/PostController';
+import { checkPermissionMiddleware } from 'modules/user/api/middlewares/checkPermissionMIddleware';
 import passport from 'passport';
 
 const postRouter = Router();
@@ -8,7 +9,7 @@ const postController = new PostController();
 
 postRouter.get(
   '/',
-  passport.authenticate('access-jwt', { session: false }),
+  //   passport.authenticate('access-jwt', { session: false }),
   postController.getAllPosts
 );
 
@@ -21,6 +22,10 @@ postRouter.post(
 postRouter.patch(
   '/:id/verify',
   passport.authenticate('access-jwt', { session: false }),
+  checkPermissionMiddleware({
+    action: 'approve',
+    resource: 'post',
+  }),
   postController.verifyPost
 );
 
