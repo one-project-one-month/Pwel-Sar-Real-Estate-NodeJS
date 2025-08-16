@@ -43,6 +43,22 @@ export class AgentController {
     }
   }
 
+  async getAllAgents(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { limit, page, search, searchBy } = req.query;
+      const pageNum = parseInt(page as string, 10) || undefined;
+      const limitNum = parseInt(limit as string, 10) || undefined;
+      const getAllAgentsUseCase = new GetAllAgentsUseCase(
+        Container.agentRepository
+      );
+    } catch (error) {
+      throw AppError.new(
+        'internalErrorServer',
+        `Something went wrong: ${error}`
+      );
+    }
+  }
+
   // eslint-disable-next-line no-unused-vars
   async verifyAgent(req: Request, res: Response, next: NextFunction) {
     try {

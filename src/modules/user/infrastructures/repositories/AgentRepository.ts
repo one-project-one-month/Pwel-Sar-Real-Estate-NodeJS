@@ -3,7 +3,11 @@ import {
   Agent,
   AgentProfileStatus,
 } from 'modules/user/domain/entities/Agent.entity';
-import { IAgentRepository } from 'modules/user/domain/repositories/IAgentRepository';
+import { GetAllRequestType } from 'modules/user/domain/repositories';
+import {
+  GetAgentListReturnType,
+  IAgentRepository,
+} from 'modules/user/domain/repositories/IAgentRepository';
 import { AppError, errorKinds } from 'utils/error-handling';
 
 export class AgentRepository implements IAgentRepository {
@@ -26,6 +30,40 @@ export class AgentRepository implements IAgentRepository {
     }
   }
 
+  async getAllAgent(
+    parmas: GetAllRequestType
+  ): Promise<GetAgentListReturnType> {
+    try {
+      const { limit = 20, page = 0 } = parmas;
+
+      const result = await prisma.$transaction([
+        prisma.agentProfile.findMany({
+          include: {
+            user: true,
+          },
+          orderBy: { createdAt: 'desc' },
+          skip: page * limit,
+          take: limit,
+
+          where: this.getListFilter(parmas),
+        }),
+        prisma.agentProfile.count({
+          where: this.getListFilter(parmas),
+        }),
+      ]);
+
+      const [agents, totlaCount] = result;
+
+      const agentUser = agents.map((agent: any) => new Agent(agent));
+
+      return { agents: agentUser, totalCount: totlaCount };
+    } catch (error) {
+      throw AppError.new(
+        'internalErrorServer',
+        `Failed to get all agents: ${error}`
+      );
+    }
+  }
   async verifyAgent(params: any): Promise<Agent> {
     try {
       console.log(params);
@@ -60,4 +98,22 @@ export class AgentRepository implements IAgentRepository {
       );
     }
   }
+
+  private getListFilter = (params: GetAllRequestType) => {
+    const { searchBy, searchKeyword } = params;
+    if (searchBy === 'username' && searchKeyword) {
+      return {
+        user: {
+          username: {
+            contains: searchKeyword,
+          },
+        },
+      };
+    } else if (searchBy && searchKeyword) {
+      return {
+        [searchBy]: searchKeyword,
+      };
+    }
+    return {};
+  };
 }

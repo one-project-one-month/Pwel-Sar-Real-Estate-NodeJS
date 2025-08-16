@@ -12,7 +12,7 @@ export interface IAuthRepository {
     userId: number;
     // expiresAt: Date;
   }): Promise<void>;
-  deleteToken(userId: number): Promise<void>;
+  deleteToken(userId: number): Promise<Token>;
   findByEmail(email: string): Promise<null | User>;
   findById(id: number): Promise<null | User>;
   findToken(refreshToken: string): Promise<null | Token>;

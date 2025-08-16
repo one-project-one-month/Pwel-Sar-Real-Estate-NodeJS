@@ -9,6 +9,7 @@ export class AgentDTO {
   phone: string;
   status: string;
   updatedAt: Date;
+  user?: any;
   userId: number;
 
   constructor(agent: any) {
@@ -23,5 +24,6 @@ export class AgentDTO {
     this.createdAt = agent.createdAt;
     this.updatedAt = agent.updatedAt;
     this.approvedAt = agent.approvedAt;
+    this.user = agent.user;
   }
 }

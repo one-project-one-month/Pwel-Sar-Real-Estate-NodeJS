@@ -63,13 +63,21 @@ export class AuthRepository implements IAuthRepository {
     // return new Token(token.id, token.token, token.userId);
   }
 
-  async deleteToken(userId: number): Promise<void> {
-    const token = await prisma.refreshToken.deleteMany({
-      where: { userId },
-    });
+  async deleteToken(userId: number): Promise<Token> {
+    const token = await prisma.refreshToken.findFirst({ where: { userId } });
 
     if (!token)
       throw AppError.new('internalErrorServer', 'Failed to delete token');
+
+    const result = await prisma.refreshToken.delete({
+      where: { id: token.id },
+    });
+
+    return new Token(result.id, result.token, result.userId);
+    // return true;
+    // return tokens.map(
+    //   (token) => new Token(token.id, token.token, token.userId)
+    // );
   }
 
   async findByEmail(email: string): Promise<null | User> {
