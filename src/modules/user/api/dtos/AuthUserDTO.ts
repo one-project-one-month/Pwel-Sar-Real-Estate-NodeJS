@@ -7,6 +7,7 @@ export class AuthUserDTO {
   roleId: number;
   updatedAt: Date;
   username: string;
+ 
 
   constructor(user: User) {
     this.id = user.id;

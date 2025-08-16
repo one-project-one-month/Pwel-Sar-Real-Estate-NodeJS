@@ -5,6 +5,7 @@ import {
   LoginSchema,
   RegisterSchema,
 } from 'modules/user/api/middlewares/authValidation';
+import { upload } from 'modules/user/api/middlewares/multer';
 import passport from 'passport';
 
 const authController = new AuthController();
@@ -13,6 +14,7 @@ const authRouter = Router();
 
 authRouter.post(
   '/register',
+  upload.fields([{name:"photo", maxCount:1}]),
   validationMiddleware.validateRequestBody(RegisterSchema),
   authController.create
 );

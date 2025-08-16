@@ -2,32 +2,56 @@ import { NextFunction, Request, Response } from 'express';
 import { LogoutUseCase } from 'modules/user/applications/usecase/auth/LogoutUseCase';
 import { RegisterUseCase } from 'modules/user/applications/usecase/auth/RegisterUseCase';
 import { AppError, catchErrorAsync, errorKinds } from 'utils/error-handling';
+import fs from "fs";
 
 import { Container } from '../di/Container';
 // import { AuthRepository } from 'modules/user/infrastructures/repositories/AuthRepository';
 import { LoginUseCase } from './../../applications/usecase/auth/LoginUseCase';
 import { RefreshAccessTokenUseCase } from './../../applications/usecase/auth/RefreshAccessTokenUseCase';
+import { uploadToCloudinary } from 'utils/cloudinary';
 export class AuthController {
   async create(req: Request, res: Response, next: NextFunction) {
+    console.log(req.files);
+    
     const { email, password, username } = req.body;
+    let photoUrl: string | null=null
+
+    const files = req.files as {[fieldname: string]: Express.Multer.File[]}
+    const photoPath = files.photo?.[0].path
 
     console.log(req.body);
 
-    const registerUseCase = new RegisterUseCase(Container.authRepository);
-    const [error, result] = await catchErrorAsync(
-      registerUseCase.execute({ email, password, username })
-    );
+    try {
 
-    // console.log(result);
+      if(photoPath){
+       try {
+         photoUrl = await uploadToCloudinary(photoPath)
+       } catch (error) {
+        console.log(error);
+        fs.unlinkSync(photoPath)
+       }
+      }
 
-    if (error) {
-      next(error);
-      return;
+      const registerUseCase = new RegisterUseCase(Container.authRepository);
+      const [error, result] = await catchErrorAsync(
+        registerUseCase.execute({ email, password, username, photo: photoUrl })
+      );
+      
+      if (error) {
+        console.error("Error in registerUseCase:", error);
+        next(error);
+        return;
+      }
+      
+      console.log("User created:", result);
+      
+      res.status(201).json({ user: result });
+      
+    } catch (error) {
+      console.log("Error at registeration");
+      fs.unlinkSync(photoPath)
+      next(error)
     }
-
-    res.status(201).json({
-      user: result,
-    });
   }
 
   // eslint-disable-next-line no-unused-vars

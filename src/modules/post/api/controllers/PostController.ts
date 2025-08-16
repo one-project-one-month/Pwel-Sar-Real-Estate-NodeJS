@@ -6,32 +6,85 @@ import { GetPostDetailUseCase } from 'modules/post/application/usecases/GetPostD
 import { VerifyPostUseCase } from 'modules/post/application/usecases/VerifyPostUseCase';
 import { PostStatus, PostType } from 'modules/post/domain/entities/Post.entity';
 import { AppError, errorKinds } from 'utils/error-handling';
-
+import fs from 'fs';
 import { Container } from '../di/Container';
+import { uploadToCloudinary } from 'utils/cloudinary';
 
 export class PostController {
   // eslint-disable-next-line no-unused-vars
-  async createPendingPost(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { post, property } = req.body;
 
-      const user = req.user as any;
+  async createPendingPost(req: Request, res: Response, next: NextFunction) {
+    const post = JSON.parse(req.body.post);
+    const property = JSON.parse(req.body.property);
+    const user = req.user as any;
+    const files = req.files as Express.Multer.File[];
+
+    if (!files || files.length < 8) {
+      res.status(400).json({ message: 'You must upload at least 8 photos.' });
+      return;
+    }
+
+    const uploadedFiles: Express.Multer.File[] = [];
+
+    try {
+      const photoData = await Promise.all(
+        files.map(async (file) => {
+          const url = await uploadToCloudinary(file.path);
+          if (!url) {
+            throw AppError.new(
+              'internalErrorServer',
+              `Photo upload failed for ${file.originalname}`
+            );
+          }
+          uploadedFiles.push(file); // Only push after successful upload
+          return { path: url };
+        })
+      );
 
       const postUseCase = new CreatePendingPostUseCase(
         Container.postRepository,
-        Container.propertyRepository
+        Container.propertyRepository,
+        Container.propertyPhotoRepository
       );
 
       const result = await postUseCase.execute({
         post: { ...post, userId: user.id },
         property: { ...property, ownerId: user.id },
+        photos: photoData,
       });
 
-      res.status(201).json(result);
+      // Clean up uploaded local files
+      for (const file of uploadedFiles) {
+        try {
+          if (fs.existsSync(file.path)) {
+            fs.unlinkSync(file.path);
+          }
+        } catch (err) {
+          console.error(`Failed to delete file ${file.path}`, err);
+        }
+      }
+
+      res.status(201).json({
+        ...result,
+        photos: photoData.map((p) => p.path),
+      });
+
     } catch (error) {
+      // Clean up all files (even if not uploaded) in case of error
+      for (const file of files) {
+        try {
+          if (fs.existsSync(file.path)) {
+            fs.unlinkSync(file.path);
+          }
+        } catch (err) {
+          console.error(`Failed to delete file ${file.path}`, err);
+        }
+      }
+
       throw AppError.new(errorKinds.badRequest, `${error}`);
     }
   }
+
 
   // eslint-disable-next-line no-unused-vars
   async deletePost(req: Request, res: Response, next: NextFunction) {

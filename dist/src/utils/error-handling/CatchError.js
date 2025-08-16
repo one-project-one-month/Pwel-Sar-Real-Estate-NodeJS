@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.tryAndThrow = exports.catchError = exports.catchErrorAsync = void 0;
+/* eslint-disable no-unused-vars */
 const catchErrorAsync = (promise, ErrorInstance) => {
     return promise
         .then((data) => [undefined, data])

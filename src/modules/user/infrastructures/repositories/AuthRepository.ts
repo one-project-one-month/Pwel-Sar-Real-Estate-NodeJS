@@ -22,6 +22,7 @@ export class AuthRepository implements IAuthRepository {
       roleId: user.roleId,
       updatedAt: user.updatedAt,
       username: user.username,
+      photo: user.photo //add photo
     });
     return newUser;
   }
@@ -95,6 +96,7 @@ export class AuthRepository implements IAuthRepository {
       roleId: user.roleId,
       updatedAt: user.updatedAt,
       username: user.username,
+      photo: user.photo //add photo
     });
   }
 
@@ -113,6 +115,7 @@ export class AuthRepository implements IAuthRepository {
       roleId: user.roleId,
       updatedAt: user.updatedAt,
       username: user.username,
+      photo: user.photo //add photo
     });
   }
 

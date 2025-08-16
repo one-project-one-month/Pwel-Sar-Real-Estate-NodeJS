@@ -6,9 +6,7 @@ class OwnerDTO {
         this.id = owner.id;
         this.nrcNo = owner.nrcNo;
         this.address = owner.address;
-        this.userId = owner.userId;
-        this.username = owner.username;
-        this.email = owner.email;
+        this.user = owner.user;
     }
 }
 exports.OwnerDTO = OwnerDTO;

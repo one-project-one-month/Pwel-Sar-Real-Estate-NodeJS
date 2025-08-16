@@ -20,21 +20,21 @@ class UsersController {
     getAll(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { page, limit, search, searchBy } = req.query;
+                const { limit, page, search, searchBy } = req.query;
                 const pageNum = parseInt(page, 10) || undefined;
                 const limitNum = parseInt(limit, 10) || undefined;
                 const result = yield getUserListUseCase.execute({
-                    page: pageNum,
                     limit: limitNum,
+                    page: pageNum,
                     search: search,
-                    searchBy: searchBy
+                    searchBy: searchBy,
                 });
                 res.status(200).json(result);
             }
             catch (error) {
                 error instanceof error_handling_1.AppError
                     ? next(error)
-                    : next(error_handling_1.AppError.new(error_handling_1.errorKinds.internalServerError, "userController : internal Server Error"));
+                    : next(error_handling_1.AppError.new(error_handling_1.errorKinds.internalServerError, 'userController : internal Server Error'));
             }
         });
     }
