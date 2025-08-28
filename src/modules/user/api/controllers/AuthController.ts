@@ -85,20 +85,23 @@ export class AuthController {
     res.status(200).json(result);
   }
 
-  // eslint-disable-next-line no-unused-vars
   async logout(req: Request, res: Response, next: NextFunction) {
     const { id }: { id: number } = req.user as { id: number };
 
-    const logoutUseCase = new LogoutUseCase(Container.authRepository);
-
     if (!id) throw AppError.new('invalidToken', 'No userId');
 
-    await logoutUseCase.execute(id);
+    const logoutUseCase = new LogoutUseCase(Container.authRepository);
 
-    res.status(204).json({ message: 'Logout success' });
+    const [error, result] = await catchErrorAsync(logoutUseCase.execute(id));
+
+    if (error) {
+      next(error);
+      return;
+    }
+
+    res.status(204).json(result);
   }
 
-  // eslint-disable-next-line no-unused-vars
   async refreshToken(req: Request, res: Response, next: NextFunction) {
     const { refreshToken } = req.body;
 
@@ -111,9 +114,15 @@ export class AuthController {
       Container.authRepository
     );
 
-    const newAccessToken = await refreshAccessTokenUseCase.execute(
-      refreshToken
+    const [error, result] = await catchErrorAsync(
+      refreshAccessTokenUseCase.execute(refreshToken)
     );
-    res.status(200).json(newAccessToken);
+    // console.log(result);
+    if (error) {
+      next(error);
+      return;
+    }
+
+    res.status(200).json(result);
   }
 }

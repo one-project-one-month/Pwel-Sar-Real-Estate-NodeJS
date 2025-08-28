@@ -19,6 +19,8 @@ export class RefreshAccessTokenUseCase {
 
     const accessToken = generateAccessToken(decoded);
 
+    console.log(accessToken);
+
     return { accessToken };
   }
 }

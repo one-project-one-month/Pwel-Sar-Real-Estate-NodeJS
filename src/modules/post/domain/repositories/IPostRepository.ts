@@ -10,7 +10,8 @@ export interface IPostRepositories {
   // eslint-disable-next-line no-unused-vars
   findPostById(id: number): Promise<Post>;
 
-  getAllPosts(): Promise<Post[]>;
+  // eslint-disable-next-line no-unused-vars
+  getAllPosts(filterOption: any): Promise<Post[]>;
 
   // eslint-disable-next-line no-unused-vars
   verifyPost(data: any): Promise<Post>;

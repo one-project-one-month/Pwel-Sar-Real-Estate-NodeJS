@@ -1,4 +1,4 @@
-import { User } from 'modules/user/domain/entitiies/User.entity';
+import { User } from 'modules/user/domain/entities/User.entity';
 import {
   GetAllRequestType,
   GetUserListReturnType,

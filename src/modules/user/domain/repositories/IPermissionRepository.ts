@@ -1,6 +1,6 @@
-import { Permission } from "../entitiies/Permission";
+import { Permission } from '../entities/Permission';
 
 export interface IPermissionRepository {
-    getAll(): Promise<Permission[]>;
-    getPermissionByRoleID(roleID: number): Promise<Permission[]>
+  getAll(): Promise<Permission[]>;
+  getPermissionByRoleID(roleID: number): Promise<Permission[]>;
 }

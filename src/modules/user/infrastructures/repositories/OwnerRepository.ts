@@ -1,5 +1,5 @@
 import { prisma } from 'libs/prismaClients';
-import { Owner } from 'modules/user/domain/entitiies/Owner.entity';
+import { Owner } from 'modules/user/domain/entities/Owner.entity';
 import {
   GetAllOwnerRequestType,
   GetOwnerListReturnType,

@@ -8,9 +8,9 @@ export class GetAllPostsUseCase {
     private readonly postRepository: IPostRepositories
   ) {}
 
-  async execute(): Promise<PostDTO[]> {
+  async execute(filterOption: any): Promise<PostDTO[]> {
     try {
-      const posts = await this.postRepository.getAllPosts();
+      const posts = await this.postRepository.getAllPosts(filterOption);
 
       console.log(posts);
 

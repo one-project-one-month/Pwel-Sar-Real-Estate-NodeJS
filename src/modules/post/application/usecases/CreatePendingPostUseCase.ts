@@ -1,4 +1,5 @@
 import { IPostRepositories } from 'modules/post/domain/repositories/IPostRepository';
+import { IPorpertyPhotoRepository } from 'modules/post/domain/repositories/IPropertyPhotoRepository';
 import { IPropertyRepository } from 'modules/post/domain/repositories/IPropertyRepository';
 import { AppError } from 'utils/error-handling';
 
@@ -7,8 +8,9 @@ export class CreatePendingPostUseCase {
     // eslint-disable-next-line no-unused-vars
     private readonly postRepository: IPostRepositories,
     // eslint-disable-next-line no-unused-vars
-    private readonly propertyRepository: IPropertyRepository
-  ) {}
+    private readonly propertyRepository: IPropertyRepository,
+    private readonly propertyPhotoRepository: IPorpertyPhotoRepository
+  ) { }
 
   async execute(params: any): Promise<any> {
     try {
@@ -19,6 +21,15 @@ export class CreatePendingPostUseCase {
         ...params.property,
         postId: post.id,
       });
+
+      if (params.photos?.length > 0) {
+        await this.propertyPhotoRepository.createMany(
+          params.photos.map((photo: { path: string }) => ({
+            path: photo.path,
+            propertyId: property.id
+          }))
+        );
+      }
 
       return { post, property };
     } catch (error) {
