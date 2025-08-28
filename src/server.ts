@@ -16,24 +16,24 @@ const app = express();
 const port = AppConfig.getConfig('PORT');
 
 const whitelist = [
-  'http://localhost:5173',
-  'http://localhost:5174',
-  process.env.FRONTEND,
+    'http://localhost:5173',
+    'http://localhost:5174',
+    process.env.FRONTEND,
 ];
 
 const corsOptions = {
-  credentials: true,
-  origin: function (
-    origin: any,
-    // eslint-disable-next-line no-unused-vars
-    callback: (err: Error | null, origin?: any) => void
-  ) {
-    if (!origin || whitelist.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+    credentials: true,
+    origin: function (
+        origin: any,
+        // eslint-disable-next-line no-unused-vars
+        callback: (err: Error | null, origin?: any) => void
+    ) {
+        if (!origin || whitelist.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
 };
 
 app.use(cors(corsOptions));
