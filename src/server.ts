@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import './config/env/dotenv';
 // import './config/di.container';
 
-// import bodyParser from 'body-parser';
+import bodyParser from 'body-parser';
 import AppConfig from 'config/env/app-config';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
